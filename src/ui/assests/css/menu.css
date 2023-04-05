@@ -1,0 +1,96 @@
+#menu-title-bar {
+    -webkit-app-region: drag;
+    height: 30px;
+    width: 100%;
+    border-color: none;
+    background-color: lightslategray;
+    padding: 0;
+    margin: 0;
+}
+
+#menu-title {
+    position: fixed;
+    left: 15px;
+    padding-top: 6px;
+    color: lightsteelblue;
+    font-family: Arial;
+    font-size: small;
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+}
+
+.menu-title-bar-btns {
+    -webkit-app-region: no-drag;
+    float: right;
+    top: 0;
+    height: 30px;
+}
+
+.menu-minm-btn {
+    padding-left: 12px;
+    box-sizing: border-box;
+    float: left;
+    width: 30px;
+    height: 30px;
+    border: none;
+    font-family: Arial;
+    color: lightgrey;
+    font-size: small;
+    cursor: default;
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+}
+
+.menu-minm-btn:hover {
+    background-color: grey;
+    color: lightgrey;
+    outline: none;
+}
+
+.menu-maxm-btn {
+    padding-left: 7px;
+    padding-top: 7px;
+    box-sizing: border-box;
+    float: left;
+    width: 30px;
+    height: 30px;
+    border: none;
+    font-family: Arial;
+    color: lightgrey;
+    font-size: small;
+    cursor: default;
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+}
+
+.menu-maxm-btn:hover {
+    background-color: grey;
+    color: lightgrey;
+    outline: none;
+}
+
+.menu-close-btn {
+    padding-left: 10px;
+    padding-top: 6px;
+    box-sizing: border-box;
+    float: right;
+    width: 30px;
+    height: 30px;
+    border: none;
+    font-family: Arial;
+    color: lightgrey;
+    font-size: small;
+    cursor: default;
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+}
+
+.menu-close-btn:hover {
+    background-color: red;
+    color: lightgrey;
+    outline: none;
+}

@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <!-- css -->
+    <link rel="stylesheet" href="./assests/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="./assests/css/login.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HajiriLab</title>
+</head>
+
+<body>
+    <!-- main body -->
+    <div class="container-fluid vh-100 custom-bg-0">
+        <!-- for title bar -->
+        <div id="login-title-bar">
+            <div id="login-title"><strong>HajiriLab</strong></div>
+            <div class="login-title-bar-btns">
+                <!-- minmize button -->
+                <div id="login-minm-btn" class="login-minm-btn"><strong>_</strong></div>
+                <!-- close button -->
+                <div id="login-close-btn" class="login-close-btn">X</div>
+            </div>
+        </div>
+        <!-- for login container -->
+        <div class="container vh-100" style="padding: 70px;">
+            <div class="row h-100">
+                <!-- right column containing logo and descriptions -->
+                <div class="col-md-5 d-flex align-items-center justify-content-center custom-bg-1">
+                    <div class="container">
+                        <div class="logo p-3">
+                            <img src="./assests/images/logo.png" class="rounded-circle w-25 mx-auto d-block">
+                        </div>
+                        <div>
+                            <h2 class="text-center text-dark"><strong>HAJIRILAB</strong></h2>
+                        </div>
+                        <div>
+                            <p class="text-center text-dark">Face Recognition <br> Attendance System</p>
+                        </div>
+                        <div>
+                            <p class="text-center text-secondary pt-3"><small>A smart easy-to-use application <br> for
+                                    managing
+                                    attendance.</small></p>
+                        </div>
+                    </div>
+                </div>
+                <!-- left column containing login -->
+                <div class="col-md-7 custom-bg-2">
+                    <div class="container">
+                        <div class="row">
+                            <div class="login-header">
+                                <h4 class="text-dark"><strong>Login into HajiriLab</strong></h4>
+                                <p><small>Enter your login details below.</small></p>
+                            </div>
+                            <div class="login-form">
+                                <form>
+                                    <fieldset>
+                                        <div class="form-group">
+                                            <label class="login-show-error" id="login-show-error"></label>
+                                            <div class="form-floating mb-3">
+                                                <input type="text" class="form-control mt-2" id="floatingUsername"
+                                                    placeholder="Username">
+                                                <label for="FloatingUsername">Username</label>
+                                            </div>
+                                            <div class="form-floating mb-3">
+                                                <input type="password" class="form-control" id="floatingPassword"
+                                                    placeholder="Password">
+                                                <label for="floatingPassword">Password</label>
+                                                <iconEye id="login-toogle-password"
+                                                    class="fa fa-fw fa-eye-slash login-toggle-password-icon"></iconEye>
+                                                <div class="container">
+                                                    <small id="forgotPassword" class="text-right"><a href="#">Forgot
+                                                            Password?</a></small>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <button type="submit" id="login-btn"
+                                            class="btn btn-block login-btn">Login</button>
+                                    </fieldset>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script type="text/javascript" src="./js/login.js"></script>
+</body>
+
+</html>
