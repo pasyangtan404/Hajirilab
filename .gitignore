@@ -1,0 +1,6 @@
+node_modules
+preprocessed_dataset/
+raw_dataset/
+.venv
+.vscode
+__pycache__/
