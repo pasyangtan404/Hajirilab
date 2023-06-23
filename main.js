@@ -1,13 +1,12 @@
 const { app, ipcMain, BrowserWindow, Menu } = require("electron")
 require('electron-reload')(__dirname)
 Menu.setApplicationMenu(false)
-const { spawn } = require('child_process');
 
 let mainWindow;
-let menuWindow;
+var menuWindow = null;
 
-function createMainWindow() {
-    const mainWindow = new BrowserWindow({
+app.whenReady().then(() => {
+    mainWindow = new BrowserWindow({
         width: 1000,
         height: 700,
         minWidth: 700,
@@ -29,86 +28,59 @@ function createMainWindow() {
     mainWindow.once('ready-to-show', function () {
         mainWindow.show()
     })
-}
+})
 
-function createMenuWindow() {
-    const menuWindow = new BrowserWindow({
-        width: 1000,
-        height: 700,
-        minWidth: 650,
-        minHeight: 500,
-        frame: false,
-        titleBarStyle: "hidden",
-        show: false,
-        webPreferences: {
-            nodeIntegration: true,
-            contextIsolation: false,
-            enableRemoteModule: true
-        }
-    })
+ipcMain.on('submit-login', (event, data) => {
+    console.log('Received login data:', data);
 
-    menuWindow.loadFile('src/ui/menu.html')
-    menuWindow.maximize()
-    menuWindow.webContents.openDevTools()
-    mainWindow.close()
-}
+    const parsedData = JSON.parse(data);
+    console.log(parsedData)
+
+    if (parsedData.success == true) {
+        event.sender.send('login-status', 'success');
+
+        menuWindow = new BrowserWindow({
+            width: 1000,
+            height: 630,
+            minWidth: 770,
+            minHeight: 500,
+            frame: false,
+            titleBarStyle: "hidden",
+            webPreferences: {
+                nodeIntegration: true,
+                contextIsolation: false,
+                enableRemoteModule: true
+            }
+        })
+
+        menuWindow.on('error', (error) => {
+            console.error('An error occurred while creating the menu window:', error);
+        });
+        
+        console.log('Loading menu.html...');
+        menuWindow.loadFile('src/ui/menu.html')
+        menuWindow.maximize()
+        menuWindow.webContents.openDevTools()
+        menuWindow.once('ready-to-show', function () { // show menu window when ready
+            console.log('Showing menu window...');
+            menuWindow.show();
+        });
+
+        mainWindow.close();
+
+    } else {
+        event.sender.send('login-status', 'fail');
+    }
+})
 
 ipcMain.on('menu-maximize-window', () => {
-    if (createMenuWindow.isMaximized()) {
-        createMenuWindow.unmaximize();
+    if (menuWindow.isMaximized()) {
+        menuWindow.unmaximize();
     }
     else {
-        createMenuWindow.maximize();
+        menuWindow.maximize();
     }
 })
-
-function validateLoginCredentials(username, password) {
-    return new Promise((resolve, reject) => {
-        // Call a Python script that validates the login credentials
-        const script = spawn('python', ['backend/app.py', username, password]);
-        let result = '';
-
-        script.stdout.on('data', (data) => {
-            result += data.toString();
-        });
-
-        script.stderr.on('data', (data) => {
-            console.error(data.toString());
-            reject(data.toString());
-        });
-
-        script.on('close', (code) => {
-            if (code !== 0) {
-                reject(`Validation script exited with code ${code}`);
-            } else {
-                resolve(result.trim());
-            }
-        });
-    });
-}
-
-app.whenReady().then(() => {
-    createMainWindow()
-})
-
-ipcMain.on('submit-login-form', async (event, data) => {
-    const { username, password } = data;
-
-    try {
-        const result = await validateLoginCredentials(username, password);
-
-        // If the login was successful, load the menu page and close the main window
-        if (result === 'success') {
-            createMenuWindow();
-            event.sender.send('login-status', 'success');
-        } else {
-            event.sender.send('login-status', 'fail');
-        }
-    } catch (error) {
-        console.error(error);
-        event.sender.send('login-status', 'error');
-    }
-});
 
 app.on('window-all-closed', () => {
     if (process.platform != 'darwin') {

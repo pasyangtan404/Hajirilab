@@ -6,6 +6,7 @@
     <link rel="stylesheet" href="./assests/css/bootstrap.min.css">
     <link rel="stylesheet" type="text/css" href="./assests/css/menu.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css">
 
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -14,7 +15,8 @@
 </head>
 
 <body>
-    <div class="container-fluid vh-100 custom-bg-0">
+    <!-- main body -->
+    <div class="container-fluid vh-100 custom-bg-0 p-0">
         <!-- for title bar -->
         <div id="menu-title-bar">
             <div id="menu-title"><strong>HajiriLab</strong></div>
@@ -24,10 +26,273 @@
                 <!-- maximize button -->
                 <div id="menu-maxm-btn" class="fa fa-window-maximize menu-maxm-btn"></div>
                 <!-- close button -->
-                <div id="menu-close-btn" class="menu-close-btn">X</div>
+                <div id="menu-close-btn" class="menu-close-btn"><strong>X</strong></div>
+            </div>
+        </div>
+        <div class="container-fluid vh-100 p-0">
+            <!-- head container -->
+            <div class="head-container d-flex align-items-center justify-content-between p-3">
+                <div class="d-flex align-items-center" style="padding-left: 15px;">
+                    <a href="#">
+                        <img src="./assests/images/logo.png" height="50px" width="50px" alt="Logo"
+                            class="rounded-circle mx-auto d-block">
+                    </a>
+                    <h2 class="text-center text-dark p-2 pt-3" style="font-size: large;"><strong>HAJIRILAB </strong>
+                    </h2>
+                </div>
+                <div class="d-flex align-items-center" style="padding-right: 15px;">
+                    <div class="pt-2">
+                        <h2 class="text-center text-dark p-3" style="font-size: large;">Admin</h2>
+                    </div>
+                    <div class="btn-group rounded-circle">
+                        <a id="user-dropdown-toggle">
+                            <img src="./assests/images/user.png" height="50px" width="50px">
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="#">Change Username</a></li>
+                            <li><a class="dropdown-item" href="#">Change Password</a></li>
+                            <li>
+                                <hr class="dropdown-divider">
+                            </li>
+                            <li><a class="dropdown-item" href="#">Logout</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <!-- for menu container -->
+            <div class="container-fluid w-100 p-0" style="height: 92%;">
+                <!-- left column -->
+                <div class="sidebar custom-bg-1 position-fixed overflow-y-auto">
+                    <div class="menu-btn align-items-center position-relative">
+                        <i class='bx bx-menu position-relative' id="btn"></i>
+                    </div>
+                    <ul class="nav flex-column nav-list">
+                        <li class="nav-item">
+                            <div class="input-group">
+                                <input type="text" class="form-control" placeholder="Search...">
+                                <button class="btn btn-outline-secondary" type="button">
+                                    <i class='bx bx-search'></i>
+                                </button>
+                            </div>
+                            <span class="tooltip">Search</span>
+                        </li>
+                        <li class="option" data-value="option1">
+                            <a class="nav-link">
+                                <i class='bx bx-grid-alt'></i>
+                                <span class="links_name">Dashboard</span>
+                            </a>
+                            <span class="tooltip">Dashboard</span>
+                        </li>
+                        <li class="option" data-value="option2">
+                            <a class="nav-link">
+                                <i class='bx bx-user'></i>
+                                <span class="links_name">Manage Students</span>
+                            </a>
+                            <span class="tooltip">Manage Students</span>
+                        </li>
+                        <li class="option" data-value="option3">
+                            <a class="nav-link">
+                                <i class='bx bx-calendar-check'></i>
+                                <span class="links_name">Attendance</span>
+                            </a>
+                            <span class="tooltip">Attendance</span>
+                        </li>
+                        <li class="option" data-value="option4">
+                            <a class="nav-link">
+                                <i class='bx bx-pie-chart-alt-2'></i>
+                                <span class="links_name">Analytics</span>
+                            </a>
+                            <span class="tooltip">Analytics</span>
+                        </li>
+                        <li class="option" data-value="option5">
+                            <a class="nav-link">
+                                <i class='bx bxs-user-account'></i>
+                                <span class="links_name">Account</span>
+                            </a>
+                            <span class="tooltip">Account</span>
+                        </li>
+                        <li class="option" data-value="option6">
+                            <a class="nav-link">
+                                <i class='bx bx-cog'></i>
+                                <span class="links_name">Settings</span>
+                            </a>
+                            <span class="tooltip">Settings</span>
+                        </li>
+                        <li class="logout">
+                            <a class="nav-link" id="log-out">
+                                <i class='bx bx-log-out'></i>
+                                <span class="links_name">Logout</span>
+                            </a>
+                            <span class="tooltip">Logout</span>
+                        </li>
+                    </ul>
+                </div>
+                <!-- right column -->
+                <div id="content">
+                    <div class="home-section position-relative overflow-y-auto pt-3" id="option1-content">
+                        <!-- Dashboard Content -->
+                        <div class="container-fluid min-vh-100 p-0">
+                            <div class="container-fluid p-0 menu-header-container">
+                                <h1>Dashboard</h1>
+                            </div>
+                            <!-- Dashboard Header -->
+                            <div class="dashboard-header">
+                                <div class="container-fluid p-0">
+                                    <p>Welcome to the dashboard. Here you can manage your attendance records.</p>
+                                </div>
+                            </div>
+                            <main class="dashboard-content">
+                                <div class="container-fluid" style="padding-left: 30px;">
+                                    <h2>Attendance Records</h2>
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <div class="card">
+                                                <div class="card-title">Today's Attendance</div>
+                                                <div class="card-text">View attendance records for today.</div>
+                                                <a href="#" class="card-link">View Records</a>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="card">
+                                                <div class="card-title">Weekly Attendance</div>
+                                                <div class="card-text">View attendance records for this month.</div>
+                                                <a href="#" class="card-link">View Records</a>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="card">
+                                                <div class="card-title">Export Records</div>
+                                                <div class="card-text">Export attendance records to CSV file.</div>
+                                                <a href="#" class="card-link">Export Records</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <h2>Add New Attendance Record</h2>
+                                    <form>
+                                        <div class="form-group">
+                                            <div class="form-field mb-3">
+                                                <label for="employee-name">Student Name</label>
+                                                <input type="text" class="form-control" id="std-name"
+                                                    placeholder="Enter student name">
+                                            </div>
+                                            <div class="form-field mb-3">
+                                                <label for="employee-id">Student ID</label>
+                                                <input type="text" class="form-control" id="std-id"
+                                                    placeholder="Enter student ID">
+                                            </div>
+                                            <button type="submit" id="add-record-btn"
+                                                class="btn btn-block add-record-btn">Add
+                                                Record</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </main>
+                        </div>
+                    </div>
+                    <div class="home-section position-relative overflow-y-auto pt-3" id="option2-content">
+                        <!-- Manage Students content -->
+                        <div class="container-fluid min-vh-100 p-0">
+                            <div class="container-fluid p-0 menu-header-container">
+                                <h1>Manage Students</h1>
+                            </div>
+                            <!-- Manage Header -->
+                            <div class="manage-header">
+                                <div class="container-fluid p-0">
+                                    <p>Welcome to the student management section. Here you can add, remove, and
+                                        update
+                                        student information.</p>
+                                </div>
+                            </div>
+                            <!-- Dashboard Content -->
+                            <main class="manage-content">
+                                <section class="container-fluid p-0">
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <div class="card mb-4">
+                                                <div class="card-body">
+                                                    <h2 class="card-title mb-4">Add Student</h2>
+                                                    <form>
+                                                        <div class="mb-3">
+                                                            <label for="student-name" class="form-label">Name</label>
+                                                            <input type="text" class="form-control" id="student-name"
+                                                                placeholder="Enter name">
+                                                        </div>
+                                                        <div class="mb-3">
+                                                            <label for="student-id" class="form-label">Student
+                                                                ID</label>
+                                                            <input type="text" class="form-control" id="student-id"
+                                                                placeholder="Enter student ID">
+                                                        </div>
+                                                        <div class="mb-3">
+                                                            <label for="student-photo" class="form-label">Photo</label>
+                                                            <input type="file" class="form-control" id="student-photo">
+                                                        </div>
+                                                        <button type="submit" id="add-std-btn"
+                                                            class="btn btn-block add-std-btn">Add
+                                                            Student</button>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-4">
+                                            <div class="card mb-4">
+                                                <div class="card-body">
+                                                    <h2 class="card-title mb-4">Update Information</h2>
+                                                    <form>
+                                                        <div class="mb-3">
+                                                            <label for="student-id-update" class="form-label">Student
+                                                                ID</label>
+                                                            <input type="text" class="form-control"
+                                                                id="student-id-update" placeholder="Enter student ID">
+                                                        </div>
+                                                        <div class="mb-3">
+                                                            <label for="student-name-update"
+                                                                class="form-label">Name</label>
+                                                            <input type="text" class="form-control"
+                                                                id="student-name-update" placeholder="Enter name">
+                                                        </div>
+                                                        <div class="mb-3">
+                                                            <label for="student-photo-update"
+                                                                class="form-label">Photo</label>
+                                                            <input type="file" class="form-control"
+                                                                id="student-photo-update">
+                                                        </div>
+                                                        <button type="submit" id="update-std-btn"
+                                                            class="btn btn-block update-std-btn">Update
+                                                            Student</button>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="card mb-4">
+                                                <div class="card-body">
+                                                    <h2 class="card-title mb-4">Remove Student</h2>
+                                                    <form>
+                                                        <div class="mb-3">
+                                                            <label for="student-id-remove" class="form-label">Student
+                                                                ID</label>
+                                                            <input type="text" class="form-control"
+                                                                id="student-id-remove" placeholder="Enter student ID">
+                                                        </div>
+                                                        <button type="submit" id="remove-std-btn"
+                                                            class="btn btn-danger remove-std-btn">Remove
+                                                            Student</button>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </section>
+                            </main>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
+
     <script type="text/javascript" src="./js/menu.js"></script>
 </body>
 

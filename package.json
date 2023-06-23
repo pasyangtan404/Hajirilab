@@ -15,6 +15,7 @@
   "dependencies": {
     "electron-reload": "^2.0.0-alpha.1",
     "request": "^2.88.2",
-    "request-promise": "^4.2.6"
+    "request-promise": "^4.2.6",
+    "spawn-sync": "^1.0.15"
   }
 }
