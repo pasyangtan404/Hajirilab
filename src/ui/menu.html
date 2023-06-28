@@ -64,84 +64,70 @@
                 <!-- left column -->
                 <div class="sidebar custom-bg-1 position-fixed overflow-y-auto">
                     <div class="menu-btn align-items-center position-relative">
-                        <i class='bx bx-menu position-relative' id="btn"></i>
+                        <i class='bx bx-chevron-right position-relative' id="btn"></i>
                     </div>
                     <ul class="nav flex-column nav-list">
-                        <li class="nav-item">
-                            <div class="input-group">
-                                <input type="text" class="form-control" placeholder="Search...">
-                                <button class="btn btn-outline-secondary" type="button">
-                                    <i class='bx bx-search'></i>
-                                </button>
-                            </div>
-                            <span class="tooltip">Search</span>
-                        </li>
                         <li class="option" data-value="option1">
-                            <a class="nav-link">
+                            <a class="nav-link" title="Manage Details">
                                 <i class='bx bx-grid-alt'></i>
-                                <span class="links_name">Dashboard</span>
+                                <span class="links_name">Manage Details</span>
                             </a>
-                            <span class="tooltip">Dashboard</span>
                         </li>
                         <li class="option" data-value="option2">
-                            <a class="nav-link">
-                                <i class='bx bx-user'></i>
-                                <span class="links_name">Manage Students</span>
-                            </a>
-                            <span class="tooltip">Manage Students</span>
-                        </li>
-                        <li class="option" data-value="option3">
-                            <a class="nav-link">
-                                <i class='bx bx-calendar-check'></i>
+                            <a class="nav-link" title="Attendance">
+                                <i class='bx bxs-user-account'></i>
                                 <span class="links_name">Attendance</span>
                             </a>
-                            <span class="tooltip">Attendance</span>
+                        </li>
+                        <li class="option" data-value="option3">
+                            <a class="nav-link" title="Face Recognition">
+                                <i class='bx bx-user'></i>
+                                <span class="links_name">Face Recognition</span>
+                            </a>
                         </li>
                         <li class="option" data-value="option4">
-                            <a class="nav-link">
+                            <a class="nav-link" title="Train Data">
+                                <i class='bx bx-bot'></i>
+                                <span class="links_name">Train Data</span>
+                            </a>
+                        </li>
+                        <li class="option" data-value="option5">
+                            <a class="nav-link" title="Analytics">
                                 <i class='bx bx-pie-chart-alt-2'></i>
                                 <span class="links_name">Analytics</span>
                             </a>
-                            <span class="tooltip">Analytics</span>
-                        </li>
-                        <li class="option" data-value="option5">
-                            <a class="nav-link">
-                                <i class='bx bxs-user-account'></i>
-                                <span class="links_name">Account</span>
-                            </a>
-                            <span class="tooltip">Account</span>
                         </li>
                         <li class="option" data-value="option6">
-                            <a class="nav-link">
+                            <a class="nav-link" title="Settings">
                                 <i class='bx bx-cog'></i>
                                 <span class="links_name">Settings</span>
                             </a>
-                            <span class="tooltip">Settings</span>
                         </li>
                         <li class="logout">
-                            <a class="nav-link" id="log-out">
+                            <a class="nav-link" id="log-out" title="Logout">
                                 <i class='bx bx-log-out'></i>
                                 <span class="links_name">Logout</span>
                             </a>
-                            <span class="tooltip">Logout</span>
                         </li>
                     </ul>
                 </div>
                 <!-- right column -->
-                <div id="content">
+                <div id="content" class="content-container">
                     <div class="home-section position-relative overflow-y-auto pt-3" id="option1-content">
-                        <!-- Dashboard Content -->
+                        <!-- Manage Details Content -->
                         <div class="container-fluid min-vh-100 p-0">
                             <div class="container-fluid p-0 menu-header-container">
-                                <h1>Dashboard</h1>
+                                <h1>Manage Details</h1>
                             </div>
-                            <!-- Dashboard Header -->
-                            <div class="dashboard-header">
+                            <!-- Manage Details-->
+                            <div class="manage-header">
                                 <div class="container-fluid p-0">
-                                    <p>Welcome to the dashboard. Here you can manage your attendance records.</p>
+                                    <p>Welcome to manage details section. Here you can add, remove, and
+                                        update
+                                        student information.</p>
                                 </div>
                             </div>
-                            <main class="dashboard-content">
+                            <main class="manage-content">
                                 <div class="container-fluid" style="padding-left: 30px;">
                                     <h2>Attendance Records</h2>
                                     <div class="row">
@@ -189,22 +175,21 @@
                             </main>
                         </div>
                     </div>
+
                     <div class="home-section position-relative overflow-y-auto pt-3" id="option2-content">
-                        <!-- Manage Students content -->
+                        <!-- Attendance content -->
                         <div class="container-fluid min-vh-100 p-0">
                             <div class="container-fluid p-0 menu-header-container">
-                                <h1>Manage Students</h1>
+                                <h1>Attendance</h1>
                             </div>
-                            <!-- Manage Header -->
-                            <div class="manage-header">
+                            <!-- Attendance Header -->
+                            <div class="attendance-header">
                                 <div class="container-fluid p-0">
-                                    <p>Welcome to the student management section. Here you can add, remove, and
-                                        update
-                                        student information.</p>
+                                    <p>Welcome to attendance section. Here you can manage attendance.</p>
                                 </div>
                             </div>
                             <!-- Dashboard Content -->
-                            <main class="manage-content">
+                            <main class="attendance-content">
                                 <section class="container-fluid p-0">
                                     <div class="row">
                                         <div class="col-md-4">
@@ -285,6 +270,76 @@
                                         </div>
                                     </div>
                                 </section>
+                            </main>
+                        </div>
+                    </div>
+
+                    <div class="home-section position-relative overflow-y-auto pt-3" id="option3-content">
+                        <!-- Face Recognition content -->
+                        <div class="container-fluid min-vh-100 p-0">
+                            <div class="container-fluid p-0 menu-header-container">
+                                <h1>Face Recognition</h1>
+                            </div>
+                            <!-- Face Recognition Header -->
+                            <div class="recog-header">
+                                <div class="container-fluid p-0">
+                                    <p>Welcome to face recognition section. Here you can take attendance using camera.</p>
+                                </div>
+                            </div>
+                            <!-- Face Recognition Content -->
+                            <main class="recog-content">
+
+                            </main>
+                        </div>
+                    </div>
+
+                    <div class="home-section position-relative overflow-y-auto pt-3" id="option4-content">
+                        <!-- Train Data content -->
+                        <div class="container-fluid min-vh-100 p-0">
+                            <div class="container-fluid p-0 menu-header-container">
+                                <h1>Train Data</h1>
+                            </div>
+                            <!-- Train Data Header -->
+                            <div class="train-header">
+                                <div class="container-fluid p-0">
+                                    <p>Welcome to train data section. Here you can train your face datasets.</p>
+                                </div>
+                            </div>
+                            <!-- Train Data Content -->
+                            <main class="train-content">
+
+                            </main>
+                        </div>
+                    </div>
+
+                    <div class="home-section position-relative overflow-y-auto pt-3" id="option5-content">
+                        <!-- Analytics content -->
+                        <div class="container-fluid min-vh-100 p-0">
+                            <div class="container-fluid p-0 menu-header-container">
+                                <h1>Analytics</h1>
+                            </div>
+                            <!-- Analytics Header -->
+                            <div class="analytics-header">
+                                <div class="container-fluid p-0">
+                                    <p>Welcome to analytics section. Here you can .</p>
+                                </div>
+                            </div>
+                            <!-- Analytics Content -->
+                            <main class="analytics-content">
+
+                            </main>
+                        </div>
+                    </div>
+
+                    <div class="home-section position-relative overflow-y-auto pt-3" id="option6-content">
+                        <!-- Settings content -->
+                        <div class="container-fluid min-vh-100 p-0">
+                            <div class="container-fluid p-0 menu-header-container">
+                                <h1>Settings</h1>
+                            </div>
+                            <!-- Settings Content -->
+                            <main class="setting-content">
+
                             </main>
                         </div>
                     </div>

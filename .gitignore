@@ -4,3 +4,4 @@ raw_dataset/
 .venv
 .vscode
 __pycache__/
+.gitignore
