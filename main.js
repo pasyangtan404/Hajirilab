@@ -43,7 +43,7 @@ ipcMain.on('submit-login', (event, data) => {
             width: 1000,
             height: 630,
             minWidth: 770,
-            minHeight: 500,
+            minHeight: 580,
             frame: false,
             titleBarStyle: "hidden",
             webPreferences: {

@@ -33,8 +33,8 @@
             <!-- head container -->
             <div class="head-container d-flex align-items-center justify-content-between p-3">
                 <div class="d-flex align-items-center" style="padding-left: 15px;">
-                    <a href="#">
-                        <img src="./assests/images/logo.png" height="50px" width="50px" alt="Logo"
+                    <a>
+                        <img src="./assests/images/logo.png" height="45px" width="45px" alt="Logo"
                             class="rounded-circle mx-auto d-block">
                     </a>
                     <h2 class="text-center text-dark p-2 pt-3" style="font-size: large;"><strong>HAJIRILAB </strong>
@@ -46,7 +46,7 @@
                     </div>
                     <div class="btn-group rounded-circle">
                         <a id="user-dropdown-toggle">
-                            <img src="./assests/images/user.png" height="50px" width="50px">
+                            <img src="./assests/images/user.png" height="40px" width="40px">
                         </a>
                         <ul class="dropdown-menu">
                             <li><a class="dropdown-item" href="#">Change Username</a></li>
@@ -116,62 +116,153 @@
                     <div class="home-section position-relative overflow-y-auto pt-3" id="option1-content">
                         <!-- Manage Details Content -->
                         <div class="container-fluid min-vh-100 p-0">
-                            <div class="container-fluid p-0 menu-header-container">
-                                <h1>Manage Details</h1>
+                            <div class="container-fluid menu-header-container">
+                                <h4>Manage Details</h4>
                             </div>
                             <!-- Manage Details-->
-                            <div class="manage-header">
+                            <div class="header">
                                 <div class="container-fluid p-0">
                                     <p>Welcome to manage details section. Here you can add, remove, and
                                         update
-                                        student information.</p>
+                                        employee's information.</p>
                                 </div>
                             </div>
                             <main class="manage-content">
-                                <div class="container-fluid" style="padding-left: 30px;">
-                                    <h2>Attendance Records</h2>
+                                <section class="container-fluid p-0">
                                     <div class="row">
-                                        <div class="col-md-4">
-                                            <div class="card">
-                                                <div class="card-title">Today's Attendance</div>
-                                                <div class="card-text">View attendance records for today.</div>
-                                                <a href="#" class="card-link">View Records</a>
+                                        <div class="col-md-6">
+                                            <div class="card mb-4">
+                                                <div class="card-body">
+                                                    <h4 class="card-title pb-1">Manage Information</h4>
+                                                    <form class="container">
+                                                        <div class="row">
+                                                            <div class="col-md-6">
+                                                                <div class="form-group">
+                                                                    <label for="employee-id" class="form-label">Employee
+                                                                        ID:</label>
+                                                                    <input type="text" class="form-control"
+                                                                        id="employee-id" required>
+                                                                </div>
+                                                                <div class="form-group">
+                                                                    <label for="first-name" class="form-label">First
+                                                                        Name:</label>
+                                                                    <input type="text" class="form-control"
+                                                                        id="first-name" required>
+                                                                </div>
+                                                                <div class="form-group">
+                                                                    <label for="gender"
+                                                                        class="form-label">Gender:</label>
+                                                                    <select class="form-select" id="gender" required>
+                                                                        <option value="">Select</option>
+                                                                        <option value="male">Male</option>
+                                                                        <option value="female">Female</option>
+                                                                        <option value="other">Other</option>
+                                                                    </select>
+                                                                </div>
+                                                                <div class="form-group">
+                                                                    <label for="email" class="form-label">Email:</label>
+                                                                    <input type="email" class="form-control" id="email"
+                                                                        required>
+                                                                </div>
+                                                                <div class="form-group">
+                                                                    <label for="address"
+                                                                        class="form-label">Address:</label>
+                                                                    <textarea class="form-control" id="address" rows="3"
+                                                                        required></textarea>
+                                                                </div>
+                                                                <div class="form-check mb-2">
+                                                                    <input class="form-check-input" type="radio"
+                                                                        name="optionsRadios" id="optionsRadios1"
+                                                                        value="option1" checked="">
+                                                                    <label class="form-check-label"
+                                                                        for="optionsRadios1">Take Photo</label>
+                                                                </div>
+                                                                <div class="button-container">
+                                                                    <div class="row">
+                                                                        <div class="col-md-6 mb-2">
+                                                                            <button type="submit" id="save-btn"
+                                                                                class="btn btn-block save-btn">Save</button>
+                                                                        </div>
+                                                                        <div class="col-md-6 mb-2">
+                                                                            <button type="submit" id="update-btn"
+                                                                                class="btn btn-block update-btn">Update</button>
+                                                                        </div>
+                                                                    </div>
+                                                                    <button type="submit" id="add-photo-btn"
+                                                                        class="btn btn-block add-photo-btn">Add
+                                                                        Photo</button>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-md-6">
+                                                                <div class="form-group">
+                                                                    <label for="department"
+                                                                        class="form-label">Department:</label>
+                                                                    <input type="text" class="form-control"
+                                                                        id="department" required>
+                                                                </div>
+                                                                <div class="form-group">
+                                                                    <label for="last-name" class="form-label">Last
+                                                                        Name:</label>
+                                                                    <input type="text" class="form-control"
+                                                                        id="last-name" required>
+                                                                </div>
+                                                                <div class="form-group">
+                                                                    <label for="dob" class="form-label">Date of
+                                                                        Birth:</label>
+                                                                    <input type="date" class="form-control" id="dob"
+                                                                        required>
+                                                                </div>
+                                                                <div class="form-group">
+                                                                    <label for="phone" class="form-label">Phone
+                                                                        Number:</label>
+                                                                    <input type="tel" class="form-control" id="phone"
+                                                                        required>
+                                                                </div>
+                                                                <div class="form-group">
+                                                                    <label for="position"
+                                                                        class="form-label">Position:</label>
+                                                                    <input type="text" class="form-control"
+                                                                        id="position" required>
+                                                                </div>
+                                                                <div class="form-check mb-2 right-option">
+                                                                    <input class="form-check-input" type="radio"
+                                                                        name="optionsRadios" id="optionsRadios2"
+                                                                        value="option2">
+                                                                    <label class="form-check-label"
+                                                                        for="optionsRadios2">No Photo</label>
+                                                                </div>
+                                                                <div class="button-container">
+                                                                    <div class="row">
+                                                                        <div class="col-md-6 mb-2">
+                                                                            <button type="submit" id="delete-btn"
+                                                                                class="btn btn-block delete-btn">Delete</button>
+                                                                        </div>
+                                                                        <div class="col-md-6 mb-2">
+                                                                            <button type="submit" id="reset-btn"
+                                                                                class="btn btn-block reset-btn">Reset</button>
+                                                                        </div>
+                                                                    </div>
+                                                                    <button type="submit" id="update-photo-btn"
+                                                                        class="btn btn-block update-photo-btn">Update
+                                                                        Photo</button>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </form>
+                                                </div>
                                             </div>
                                         </div>
-                                        <div class="col-md-4">
-                                            <div class="card">
-                                                <div class="card-title">Weekly Attendance</div>
-                                                <div class="card-text">View attendance records for this month.</div>
-                                                <a href="#" class="card-link">View Records</a>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-4">
-                                            <div class="card">
-                                                <div class="card-title">Export Records</div>
-                                                <div class="card-text">Export attendance records to CSV file.</div>
-                                                <a href="#" class="card-link">Export Records</a>
+
+                                        <div class="col-md-6">
+                                            <div class="card mb-4">
+                                                <div class="card-body">
+                                                    <h4 class="card-title pb-1">Details</h4>
+
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
-                                    <h2>Add New Attendance Record</h2>
-                                    <form>
-                                        <div class="form-group">
-                                            <div class="form-field mb-3">
-                                                <label for="employee-name">Student Name</label>
-                                                <input type="text" class="form-control" id="std-name"
-                                                    placeholder="Enter student name">
-                                            </div>
-                                            <div class="form-field mb-3">
-                                                <label for="employee-id">Student ID</label>
-                                                <input type="text" class="form-control" id="std-id"
-                                                    placeholder="Enter student ID">
-                                            </div>
-                                            <button type="submit" id="add-record-btn"
-                                                class="btn btn-block add-record-btn">Add
-                                                Record</button>
-                                        </div>
-                                    </form>
-                                </div>
+                                </section>
                             </main>
                         </div>
                     </div>
@@ -179,92 +270,108 @@
                     <div class="home-section position-relative overflow-y-auto pt-3" id="option2-content">
                         <!-- Attendance content -->
                         <div class="container-fluid min-vh-100 p-0">
-                            <div class="container-fluid p-0 menu-header-container">
-                                <h1>Attendance</h1>
+                            <div class="container-fluid menu-header-container">
+                                <h4>Attendance</h4>
                             </div>
                             <!-- Attendance Header -->
-                            <div class="attendance-header">
+                            <div class="header">
                                 <div class="container-fluid p-0">
                                     <p>Welcome to attendance section. Here you can manage attendance.</p>
                                 </div>
                             </div>
-                            <!-- Dashboard Content -->
+                            <!-- Attendance Content -->
                             <main class="attendance-content">
                                 <section class="container-fluid p-0">
                                     <div class="row">
-                                        <div class="col-md-4">
+                                        <div class="col-md-6">
                                             <div class="card mb-4">
                                                 <div class="card-body">
-                                                    <h2 class="card-title mb-4">Add Student</h2>
-                                                    <form>
-                                                        <div class="mb-3">
-                                                            <label for="student-name" class="form-label">Name</label>
-                                                            <input type="text" class="form-control" id="student-name"
-                                                                placeholder="Enter name">
+                                                    <h4 class="card-title pb-1">Attendance Information</h4>
+                                                    <form class="container">
+                                                        <div class="row">
+                                                            <div class="col-md-6">
+                                                                <div class="form-group">
+                                                                    <label for="employee-id" class="form-label">Employee
+                                                                        ID:</label>
+                                                                    <input type="text" class="form-control"
+                                                                        id="employee-id" required>
+                                                                </div>
+                                                                <div class="form-group">
+                                                                    <label for="first-name" class="form-label">First
+                                                                        Name:</label>
+                                                                    <input type="text" class="form-control"
+                                                                        id="first-name" required>
+                                                                </div>
+                                                                <div class="form-group">
+                                                                    <label for="time" class="form-label">Time:</label>
+                                                                    <input type="time" id="time" class="form-control"
+                                                                        required>
+                                                                </div>
+                                                                <div class="form-group">
+                                                                    <label for="status" class="form-label">Attendance
+                                                                        Status:</label>
+                                                                    <select class="form-select" id="status" required>
+                                                                        <option value="">Select</option>
+                                                                        <option value="present">Present</option>
+                                                                        <option value="absent">Absent</option>
+                                                                    </select>
+                                                                </div>
+                                                                <div class="button-container mt-4">
+                                                                    <div class="row">
+                                                                        <div class="col-md-6">
+                                                                            <button type="submit" id="import-btn"
+                                                                                class="btn btn-block import-btn">Import csv</button>
+                                                                        </div>
+                                                                        <div class="col-md-6">
+                                                                            <button type="submit" id="export-btn"
+                                                                                class="btn btn-block export-btn">Export csv</button>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-md-6">
+                                                                <div class="form-group">
+                                                                    <label for="department"
+                                                                        class="form-label">Department:</label>
+                                                                    <input type="text" class="form-control"
+                                                                        id="department" required>
+                                                                </div>
+                                                                <div class="form-group">
+                                                                    <label for="last-name" class="form-label">Last
+                                                                        Name:</label>
+                                                                    <input type="text" class="form-control"
+                                                                        id="last-name" required>
+                                                                </div>
+                                                                <div class="form-group">
+                                                                    <label for="attdate"
+                                                                        class="form-label">Date:</label>
+                                                                    <input type="date" class="form-control" id="attdate"
+                                                                        required>
+                                                                </div>
+                                                                <div class="button-container" style="margin-top: 102px;">
+                                                                    <div class="row">
+                                                                        <div class="col-md-6">
+                                                                            <button type="submit" id="update-btn"
+                                                                                class="btn btn-block update-btn">Update</button>
+                                                                        </div>
+                                                                        <div class="col-md-6">
+                                                                            <button type="submit" id="reset-btn"
+                                                                                class="btn btn-block reset-btn">Reset</button>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
                                                         </div>
-                                                        <div class="mb-3">
-                                                            <label for="student-id" class="form-label">Student
-                                                                ID</label>
-                                                            <input type="text" class="form-control" id="student-id"
-                                                                placeholder="Enter student ID">
-                                                        </div>
-                                                        <div class="mb-3">
-                                                            <label for="student-photo" class="form-label">Photo</label>
-                                                            <input type="file" class="form-control" id="student-photo">
-                                                        </div>
-                                                        <button type="submit" id="add-std-btn"
-                                                            class="btn btn-block add-std-btn">Add
-                                                            Student</button>
                                                     </form>
                                                 </div>
                                             </div>
                                         </div>
 
-                                        <div class="col-md-4">
+                                        <div class="col-md-6">
                                             <div class="card mb-4">
                                                 <div class="card-body">
-                                                    <h2 class="card-title mb-4">Update Information</h2>
-                                                    <form>
-                                                        <div class="mb-3">
-                                                            <label for="student-id-update" class="form-label">Student
-                                                                ID</label>
-                                                            <input type="text" class="form-control"
-                                                                id="student-id-update" placeholder="Enter student ID">
-                                                        </div>
-                                                        <div class="mb-3">
-                                                            <label for="student-name-update"
-                                                                class="form-label">Name</label>
-                                                            <input type="text" class="form-control"
-                                                                id="student-name-update" placeholder="Enter name">
-                                                        </div>
-                                                        <div class="mb-3">
-                                                            <label for="student-photo-update"
-                                                                class="form-label">Photo</label>
-                                                            <input type="file" class="form-control"
-                                                                id="student-photo-update">
-                                                        </div>
-                                                        <button type="submit" id="update-std-btn"
-                                                            class="btn btn-block update-std-btn">Update
-                                                            Student</button>
-                                                    </form>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-4">
-                                            <div class="card mb-4">
-                                                <div class="card-body">
-                                                    <h2 class="card-title mb-4">Remove Student</h2>
-                                                    <form>
-                                                        <div class="mb-3">
-                                                            <label for="student-id-remove" class="form-label">Student
-                                                                ID</label>
-                                                            <input type="text" class="form-control"
-                                                                id="student-id-remove" placeholder="Enter student ID">
-                                                        </div>
-                                                        <button type="submit" id="remove-std-btn"
-                                                            class="btn btn-danger remove-std-btn">Remove
-                                                            Student</button>
-                                                    </form>
+                                                    <h4 class="card-title pb-1">Attendance Details</h4>
+
                                                 </div>
                                             </div>
                                         </div>
@@ -277,13 +384,14 @@
                     <div class="home-section position-relative overflow-y-auto pt-3" id="option3-content">
                         <!-- Face Recognition content -->
                         <div class="container-fluid min-vh-100 p-0">
-                            <div class="container-fluid p-0 menu-header-container">
+                            <div class="container-fluid menu-header-container">
                                 <h1>Face Recognition</h1>
                             </div>
                             <!-- Face Recognition Header -->
-                            <div class="recog-header">
+                            <div class="header">
                                 <div class="container-fluid p-0">
-                                    <p>Welcome to face recognition section. Here you can take attendance using camera.</p>
+                                    <p>Welcome to face recognition section. Here you can take attendance using camera.
+                                    </p>
                                 </div>
                             </div>
                             <!-- Face Recognition Content -->
@@ -296,11 +404,11 @@
                     <div class="home-section position-relative overflow-y-auto pt-3" id="option4-content">
                         <!-- Train Data content -->
                         <div class="container-fluid min-vh-100 p-0">
-                            <div class="container-fluid p-0 menu-header-container">
+                            <div class="container-fluid menu-header-container">
                                 <h1>Train Data</h1>
                             </div>
                             <!-- Train Data Header -->
-                            <div class="train-header">
+                            <div class="header">
                                 <div class="container-fluid p-0">
                                     <p>Welcome to train data section. Here you can train your face datasets.</p>
                                 </div>
@@ -315,11 +423,11 @@
                     <div class="home-section position-relative overflow-y-auto pt-3" id="option5-content">
                         <!-- Analytics content -->
                         <div class="container-fluid min-vh-100 p-0">
-                            <div class="container-fluid p-0 menu-header-container">
+                            <div class="container-fluid menu-header-container">
                                 <h1>Analytics</h1>
                             </div>
                             <!-- Analytics Header -->
-                            <div class="analytics-header">
+                            <div class="header">
                                 <div class="container-fluid p-0">
                                     <p>Welcome to analytics section. Here you can .</p>
                                 </div>
@@ -334,7 +442,7 @@
                     <div class="home-section position-relative overflow-y-auto pt-3" id="option6-content">
                         <!-- Settings content -->
                         <div class="container-fluid min-vh-100 p-0">
-                            <div class="container-fluid p-0 menu-header-container">
+                            <div class="container-fluid menu-header-container">
                                 <h1>Settings</h1>
                             </div>
                             <!-- Settings Content -->

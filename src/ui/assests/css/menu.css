@@ -110,7 +110,7 @@ body {
 
 .head-container {
     background-color: #f8f9fa;
-    height: 8%;
+    height: 7%;
     border-top: 1px solid #ccc;
     border-bottom: 1px solid #ccc;
 }
@@ -127,7 +127,7 @@ body {
 }
 
 .sidebar.open {
-    width: 320px;
+    width: 280px;
 }
 
 .sidebar .menu-btn {
@@ -196,7 +196,7 @@ body {
 .sidebar.open li a {
     display: flex;
     height: 100%;
-    width: 320px;
+    width: 280px;
     border-radius: 12px;
     align-items: center;
     text-decoration: none;
@@ -244,8 +244,7 @@ body {
 }
 
 .sidebar.open+.content-container {
-    margin-left: 260px;
-    /* Adjust this value based on the width of your sidebar */
+    margin-left: 180px;
 }
 
 .home-section {
@@ -271,134 +270,84 @@ body {
     margin: 18px
 }
 
-@media (max-width: 420px) {
-    .sidebar li .tooltip {
-        display: none;
-    }
-}
-
-.manage-header {
-    background-color: white;
-    color: black;
-    padding: 10px;
-}
-
-.manage-header p {
-    font-size: large;
-    font-weight: 400;
-}
-
-.manage-content h2 {
-    font-size: 25px;
-    font-weight: 700;
-    margin-top: 0;
-    margin-bottom: 20px;
-}
-
-.manage-content .row {
-    margin-bottom: 30px;
-}
-
-.manage-content .card {
-    border: none;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, .05);
-    border-radius: .375rem;
-    padding: 10px;
-    transition: all .3s ease-in-out;
-}
-
-.manage-content .card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 10px 15px rgba(0, 0, 0, .1);
-}
-
-.manage-content .card-title {
-    font-size: 18px;
-    font-weight: 700;
-    margin-bottom: 20px;
-}
-
-.manage-content .card-text {
-    font-size: 16px;
-    font-weight: 400;
-    margin-bottom: 20px;
-    color: #6c757d;
-}
-
-.manage-content .card-link {
-    font-size: 16px;
-    font-weight: 700;
-    color: #007bff;
-    text-decoration: none;
-}
-
-.manage-content .card-link:hover {
-    text-decoration: underline;
-}
-
-.form-field {
-    width: 50%;
-}
-
-.add-record-btn {
-    border-radius: 10px;
-    background-color: #6495ED;
-    color: #fff;
-    padding: 0.3rem 2rem;
-    line-height: 2;
-}
-
-.add-record-btn:hover {
-    background-color: #6495ED;
-}
-
 .menu-header-container {
     background-color: #fff;
-    padding: 30px 0;
+    padding: 3px 0;
 }
 
-.menu-header-container h1 {
-    font-size: 36px;
-    margin-bottom: 20px;
+.menu-header-container h4 {
+    font-weight: bold;
 }
 
-.attendance-header p {
-    font-size: 18px;
-    margin-bottom: 0;
+.header {
+    background-color: white;
+    color: black;
 }
 
-.attendance-content {
-    background-color: #fff;
-    padding: 30px 0;
+.header p {
+    font-size: medium;
+    font-weight: 400;
 }
 
 .card-body {
     background-color: #f9f9f9;
-    padding: 30px;
-    margin-top: 30px;
+    padding: 15px 25px;
     border-radius: 5px;
     box-shadow: 0px 0px 10px #ccc;
 }
 
-.card-body h2 {
-    font-size: 28px;
-    margin-bottom: 30px;
-    text-align: center;
+.card-body h4 {
+    font-size: 20px;
+    color: #6495ED;
+    font-weight: bold;
 }
 
-.card-body .form-control {
+.card-body .form-group {
     border-radius: 0;
-    margin-bottom: 20px;
+    margin-bottom: 12px;
 }
 
-.card-body .btn {
+.form-control {
+    height: 10px;
+    outline: 1px solid gainsboro;
+}
+
+.form-group select {
+    font-size: medium;
+    padding: 5px 15px;
+    outline: 1px solid gainsboro;
+}
+
+.form-group textarea {
+    max-height: 70px;
+}
+
+.save-btn, .update-btn, .delete-btn, .reset-btn, .import-btn, .export-btn {
     border-radius: 10px;
+    width: 120px;
     background-color: #6495ED;
     color: #fff;
-    padding: 0.3rem 2rem;
+    padding: 0.3rem;
     line-height: 2;
 }
 
+.add-photo-btn, .update-photo-btn {
+    border-radius: 10px;
+    width: 250px;
+    background-color: #6495ED;
+    color: #fff;
+    padding: 0.3rem;
+    line-height: 2;
+}
+
+.button-container {
+    text-align: center;
+  }
+
 .card-body .btn:hover {
     background-color: #6495ED;
+}
+
+.right-option {
+    margin-top: 38px;
 }
