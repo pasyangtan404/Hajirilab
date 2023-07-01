@@ -11,6 +11,7 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://root:''@localhost/hajirilabdb'
 db = SQLAlchemy(app)
 ma = Marshmallow(app)
 
+
 class Users(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(20), unique=True, nullable=False)
@@ -35,24 +36,26 @@ user_schema = UserSchema()
 users_schema = UserSchema(many=True)
 
 # handle login requests
+
+
 @app.route('/login', methods=['POST'])
 def login():
     print("Login button clicked!")
     # get username and password from request body
     username = request.json.get('username')
     password = request.json.get('password')
-    
-    user = Users.query.filter_by(username= username, password=password).first()
-    
+
+    user = Users.query.filter_by(username=username, password=password).first()
+
     print(username)
     print(password)
-    
+
     if user:
         return jsonify({'success': True})
     else:
         return jsonify({'success': False, 'message': 'Invalid username or password'})
-    
-    
+
+
 class Emp_details(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     employee_id = db.Column(db.String(20), unique=True, nullable=False)
@@ -66,7 +69,7 @@ class Emp_details(db.Model):
     department = db.Column(db.String(50), nullable=False)
     position = db.Column(db.String(50), nullable=False)
     photo_sample = db.Column(db.String(10), nullable=False)
-    
+
     def __init__(self, employee_id, first_name, last_name, gender, dob, email, phone_num, address, department, position, photo_sample):
         self.employee_id = employee_id
         self.first_name = first_name
@@ -79,7 +82,7 @@ class Emp_details(db.Model):
         self.department = department
         self.position = position
         self.photo_sample = photo_sample
-        
+
 # class DetailSchema(ma.Schema):
 #     class Meta:
 #         fields = ('id', 'username', 'password', 'email')
@@ -93,7 +96,7 @@ def save_emp_details():
     try:
         print("Save button clicked!")
         data = request.get_json()
-        
+
         employee_id = data.get('employee_id')
         first_name = data.get('first_name')
         last_name = data.get('last_name')
@@ -106,96 +109,98 @@ def save_emp_details():
         position = data.get('position')
         photo_sample = data.get('photo_sample')
         
-        new_emp = Emp_details(employee_id, first_name, last_name, gender, dob, email, phone_num, address, department, position, photo_sample)
+        # Check if employee with the same employee_id already exists
+        existing_emp = Emp_details.query.filter_by(employee_id=employee_id).first()
+        if existing_emp:
+            return jsonify({'message': 'Employee details already exist'})
         
-        db.session.add(new_emp)
-        
-        db.session.commit()
-        
-        return jsonify({'message': 'Employee details saved successfully'})
-    
+        else:
+            new_emp = Emp_details(employee_id, first_name, last_name, gender,
+                              dob, email, phone_num, address, department, position, photo_sample)
+
+            db.session.add(new_emp)
+
+            db.session.commit()
+
+            return jsonify({'message': 'Employee details saved successfully'})
+
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
-@app.route('/update', methods=['POST'])
-def update_emp_details():
+
+@app.route('/update/<employee_id>', methods=['PUT'])
+def update_emp_details(employee_id):
     try:
-        employee_id = request.form.get('employee_id')
-        first_name = request.form.get('first_name')
-        last_name = request.form.get('last_name')
-        gender = request.form.get('gender')
-        dob = request.form.get('dob')
-        email = request.form.get('email')
-        phone_num = request.form.get('phone_num')
-        address = request.form.get('address')
-        department = request.form.get('department')
-        position = request.form.get('position')
-        photo_sample = request.form.get('photo_sample')
-        
-         # Retrieve the existing employee details from the database based on employee_id
-        emp = Emp_details.query.filter_by(employee_id=employee_id, first_name = first_name, last_name = last_name, gender = gender, dob = dob, email = email, phone_num = phone_num, address = address, department = department, position = position, photo_sample = photo_sample).first()
+        emp = Emp_details.query.filter_by(employee_id=employee_id).first()
+        if emp is None:
+            return jsonify({'error': 'Employee not found'}), 404
+
+        data = request.get_json()
+
+        emp.first_name = data.get('first_name')
+        emp.last_name = data.get('last_name')
+        emp.gender = data.get('gender')
+        emp.dob = data.get('dob')
+        emp.email = data.get('email')
+        emp.phone_num = data.get('phone_num')
+        emp.address = data.get('address')
+        emp.department = data.get('department')
+        emp.position = data.get('position')
+        emp.photo_sample = data.get('photo_sample')
         
         if emp:
-            employee_id = request.form.get('employee_id')
-            first_name = request.form.get('first_name')
-            last_name = request.form.get('last_name')
-            gender = request.form.get('gender')
-            dob = request.form.get('dob')
-            email = request.form.get('email')
-            phone_num = request.form.get('phone_num')
-            address = request.form.get('address')
-            department = request.form.get('department')
-            position = request.form.get('position')
-            photo_sample = request.form.get('photo_sample')
-            
             db.session.commit()
-            
+
             return jsonify({'message': 'Employee details updated successfully'})
+        
         else:
             return jsonify({'error': 'Employee not found'}), 404
-    
+
     except Exception as e:
         return jsonify({'error': str(e)}), 500
-    
-@app.route('/delete', methods=['POST'])
-def delete_emp_details():
+
+
+@app.route('/delete/<employee_id>', methods=['DELETE'])
+def delete_emp_details(employee_id):
     try:
-        employee_id = request.form.get('employee_id')
-        first_name = request.form.get('first_name')
-        last_name = request.form.get('last_name')
-        gender = request.form.get('gender')
-        dob = request.form.get('dob')
-        email = request.form.get('email')
-        phone_num = request.form.get('phone_num')
-        address = request.form.get('address')
-        department = request.form.get('department')
-        position = request.form.get('position')
-        photo_sample = request.form.get('photo_sample')   
-        
-        emp = Emp_details.query.filter_by(employee_id=employee_id, first_name = first_name, last_name = last_name, gender = gender, dob = dob, email = email, phone_num = phone_num, address = address, department = department, position = position, photo_sample = photo_sample).first()
-        
+        emp = Emp_details.query.filter_by(employee_id=employee_id).first()
+
         if emp:
             db.session.delete(emp)
-            
+
             db.session.commit()
 
             return jsonify({'message': 'Employee details deleted successfully'})
         else:
             return jsonify({'error': 'Employee not found'}), 404
-    
+
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
 
-
-
-
-
-
-
-
-
-
+@app.route('/employees', methods=['GET'])
+def get_employee_details():
+    try:
+        employees = Emp_details.query.all()
+        employee_list = []
+        for employee in employees:
+            employee_dict = {
+                'employee_id': employee.employee_id,
+                'first_name': employee.first_name,
+                'last_name': employee.last_name,
+                'gender': employee.gender,
+                'dob': str(employee.dob),
+                'email': employee.email,
+                'phone_num': employee.phone_num,
+                'address': employee.address,
+                'department': employee.department,
+                'position': employee.position,
+                'photo_sample': employee.photo_sample
+            }
+            employee_list.append(employee_dict)
+        return jsonify(employee_list)
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
 
 
 if __name__ == "__main__":

@@ -130,11 +130,12 @@
                             <main class="manage-content">
                                 <section class="container-fluid p-0">
                                     <div class="row">
-                                        <div class="col-md-6">
+                                        <div class="col-md-5">
                                             <div class="card mb-4">
                                                 <div class="card-body">
                                                     <h4 class="card-title pb-1">Manage Information</h4>
                                                     <form class="container">
+                                                        <span id="message"></span>
                                                         <div class="row">
                                                             <div class="col-md-6">
                                                                 <div class="form-group">
@@ -154,9 +155,9 @@
                                                                         class="form-label">Gender:</label>
                                                                     <select class="form-select" id="gender" required>
                                                                         <option value="">Select</option>
-                                                                        <option value="male">Male</option>
-                                                                        <option value="female">Female</option>
-                                                                        <option value="other">Other</option>
+                                                                        <option value="Male">Male</option>
+                                                                        <option value="Female">Female</option>
+                                                                        <option value="Other">Other</option>
                                                                     </select>
                                                                 </div>
                                                                 <div class="form-group">
@@ -253,11 +254,32 @@
                                             </div>
                                         </div>
 
-                                        <div class="col-md-6">
+                                        <div class="col-md-7">
                                             <div class="card mb-4">
-                                                <div class="card-body">
+                                                <div class="card-body" style="height: 72vh;">
                                                     <h4 class="card-title pb-1">Details</h4>
-
+                                                    <div class="table-responsive">
+                                                        <table id="employee-table" class="table table-striped">
+                                                            <thead>
+                                                                <tr>
+                                                                    <th>Employee ID</th>
+                                                                    <th>First Name</th>
+                                                                    <th>Last Name</th>
+                                                                    <th>Gender</th>
+                                                                    <th>Date of Birth</th>
+                                                                    <th>Email</th>
+                                                                    <th>Phone Number</th>
+                                                                    <th>Address</th>
+                                                                    <th>Department</th>
+                                                                    <th>Position</th>
+                                                                    <th>Photo Sample</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                                <!-- Employee details rows will be added dynamically -->
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
@@ -320,11 +342,13 @@
                                                                     <div class="row">
                                                                         <div class="col-md-6">
                                                                             <button type="submit" id="import-btn"
-                                                                                class="btn btn-block import-btn">Import csv</button>
+                                                                                class="btn btn-block import-btn">Import
+                                                                                csv</button>
                                                                         </div>
                                                                         <div class="col-md-6">
                                                                             <button type="submit" id="export-btn"
-                                                                                class="btn btn-block export-btn">Export csv</button>
+                                                                                class="btn btn-block export-btn">Export
+                                                                                csv</button>
                                                                         </div>
                                                                     </div>
                                                                 </div>
@@ -348,7 +372,8 @@
                                                                     <input type="date" class="form-control" id="attdate"
                                                                         required>
                                                                 </div>
-                                                                <div class="button-container" style="margin-top: 102px;">
+                                                                <div class="button-container"
+                                                                    style="margin-top: 102px;">
                                                                     <div class="row">
                                                                         <div class="col-md-6">
                                                                             <button type="submit" id="update-btn"

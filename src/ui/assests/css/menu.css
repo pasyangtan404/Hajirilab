@@ -322,18 +322,24 @@ body {
     max-height: 70px;
 }
 
-.save-btn, .update-btn, .delete-btn, .reset-btn, .import-btn, .export-btn {
+.save-btn,
+.update-btn,
+.delete-btn,
+.reset-btn,
+.import-btn,
+.export-btn {
     border-radius: 10px;
-    width: 120px;
+    width: 100px;
     background-color: #6495ED;
     color: #fff;
     padding: 0.3rem;
     line-height: 2;
 }
 
-.add-photo-btn, .update-photo-btn {
+.add-photo-btn,
+.update-photo-btn {
     border-radius: 10px;
-    width: 250px;
+    width: 200px;
     background-color: #6495ED;
     color: #fff;
     padding: 0.3rem;
@@ -342,7 +348,7 @@ body {
 
 .button-container {
     text-align: center;
-  }
+}
 
 .card-body .btn:hover {
     background-color: #6495ED;
@@ -350,4 +356,22 @@ body {
 
 .right-option {
     margin-top: 38px;
+}
+
+.table-responsive {
+    overflow-y: auto;
+    max-height: 300px;
+}
+
+.table th {
+    border-top: 1px solid #dee2e6;
+    border-bottom: 1px solid #dee2e6;
+    border-right: 1px solid #dee2e6;
+    white-space: nowrap;
+}
+
+.table tbody tr:hover {
+    cursor: pointer;
+    background-color: #f5f5f5;
+    /* Add hover background color to rows */
 }
