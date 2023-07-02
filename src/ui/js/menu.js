@@ -57,162 +57,175 @@ options.forEach(function (option) {
 });
 
 /*----------- for save, update and delete button ---------------*/
-document.getElementById('save-btn').addEventListener('click', () => {
-    const form = document.querySelector('form');
-    const messageElement = document.getElementById('message');
 
-    form.addEventListener('submit', event => {
-        event.preventDefault();
-        const employee_id = document.querySelector('#employee-id').value;
-        const first_name = document.querySelector('#first-name').value;
-        const last_name = document.querySelector('#last-name').value;
-        const gender = document.querySelector('#gender').value;
-        const dob = document.querySelector('#dob').value;
-        const email = document.querySelector('#email').value;
-        const phone_num = document.querySelector('#phone').value;
-        const address = document.querySelector('#address').value;
-        const department = document.querySelector('#department').value;
-        const position = document.querySelector('#position').value;
-        const photo_sample = document.querySelector('input[name="optionsRadios"]:checked').value;
+const form = document.querySelector('form');
+const messageElement = document.getElementById('message');
 
-        console.log(first_name)
-        console.log(last_name)
+form.addEventListener('submit', event => {
+    event.preventDefault();
+    const employee_id = document.querySelector('#employee-id').value;
+    const first_name = document.querySelector('#first-name').value;
+    const last_name = document.querySelector('#last-name').value;
+    const gender = document.querySelector('#gender').value;
+    const dob = document.querySelector('#dob').value;
+    const email = document.querySelector('#email').value;
+    const phone_num = document.querySelector('#phone').value;
+    const address = document.querySelector('#address').value;
+    const department = document.querySelector('#department').value;
+    const position = document.querySelector('#position').value;
+    const photo_sample = document.querySelector('input[name="optionsRadios"]:checked').value;
 
-        const data = {
-            employee_id: employee_id,
-            first_name: first_name,
-            last_name: last_name,
-            gender: gender,
-            dob: dob,
-            email: email,
-            phone_num: phone_num,
-            address: address,
-            department: department,
-            position: position,
-            photo_sample: photo_sample
-        }
+    console.log(first_name)
+    console.log(last_name)
 
-        fetch('http://127.0.0.1:5000/save', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(data)
-        })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error(`HTTP ${response.status} ${response.statusText}`);
-                }
-                return response.json();
-            })
-            .then(data => {
-                console.log(data);
-                if (data.message === 'Employee details saved successfully') {
-                    showMessage(messageElement, 'Employee details saved successfully');
-                } else if (data.message === 'Employee details already exist') {
-                    showMessage(messageElement, 'Employee details already exist');
-                }
-            })
-            .catch(error => {
-                console.error(error);
-                showMessage(messageElement, 'An error occurred while saving employee details');
-            });
-    });
+    const data = {
+        employee_id: employee_id,
+        first_name: first_name,
+        last_name: last_name,
+        gender: gender,
+        dob: dob,
+        email: email,
+        phone_num: phone_num,
+        address: address,
+        department: department,
+        position: position,
+        photo_sample: photo_sample
+    };
+
+    if (event.submitter.id === 'save-btn') {
+        saveEmployeeDetails(data);
+    } else if (event.submitter.id === 'update-btn') {
+        updateEmployeeDetails(data);
+    } else if (event.submitter.id === 'delete-btn') {
+        deleteEmployeeDetails(data);
+    }
 });
 
-document.getElementById('update-btn').addEventListener('click', () => {
-    const form = document.querySelector('form');
-
-    form.addEventListener('submit', event => {
-        event.preventDefault();
-        const employee_id = document.querySelector('#employee-id').value;
-        const first_name = document.querySelector('#first-name').value;
-        const last_name = document.querySelector('#last-name').value;
-        const gender = document.querySelector('#gender').value;
-        const dob = document.querySelector('#dob').value;
-        const email = document.querySelector('#email').value;
-        const phone_num = document.querySelector('#phone').value;
-        const address = document.querySelector('#address').value;
-        const department = document.querySelector('#department').value;
-        const position = document.querySelector('#position').value;
-        const photo_sample = document.querySelector('input[name="optionsRadios"]:checked').value;
-
-        console.log(first_name)
-        console.log(last_name)
-
-        const data = {
-            employee_id: employee_id,
-            first_name: first_name,
-            last_name: last_name,
-            gender: gender,
-            dob: dob,
-            email: email,
-            phone_num: phone_num,
-            address: address,
-            department: department,
-            position: position,
-            photo_sample: photo_sample
-        }
-
-        fetch(`http://127.0.0.1:5000/update/${employee_id}`, {
-            method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(data)
+function saveEmployeeDetails(data) {
+    fetch('http://127.0.0.1:5000/save', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+    })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP ${response.status} ${response.statusText}`);
+            }
+            return response.json();
         })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error(`HTTP ${response.status} ${response.statusText}`);
-                }
-                return response.json();
-            })
-            .then(data => {
-                console.log(data);
+        .then(data => {
+            console.log(data);
+            if (data.message === 'Employee details saved successfully') {
+                showMessage(messageElement, 'Employee details saved successfully');
+            } else if (data.message === 'Employee details already exist') {
+                showMessage(messageElement, 'Employee details already exist');
+            }
+        })
+        .catch(error => {
+            console.error(error);
+            showMessage(messageElement, 'An error occurred while saving employee details');
+        });
+}
+
+function updateEmployeeDetails(data) {
+    const employee_id = data.employee_id;
+
+    fetch(`http://127.0.0.1:5000/update/${employee_id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+    })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP ${response.status} ${response.statusText}`);
+            }
+            return response.json();
+        })
+        .then(data => {
+            console.log(data);
+            if (data.updated === true) {
                 alert('Employee details updated successfully');
-            })
-            .catch(error => {
-                console.error(error);
+            } else if (data.updated === false) {
+                alert('No changes made');
+            } else {
                 alert('An error occurred while updating employee details');
-            });
-    });
-});
-
-document.getElementById('delete-btn').addEventListener('click', () => {
-    const form = document.querySelector('form');
-
-    form.addEventListener('submit', event => {
-        event.preventDefault();
-        const employee_id = document.querySelector('#employee-id').value;
-
-        console.log(employee_id)
-
-        fetch(`http://127.0.0.1:5000/delete/${employee_id}`, {
-            method: 'DELETE',
+            }
         })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error(`HTTP ${response.status} ${response.statusText}`);
-                }
-                return response.json();
-            })
-            .then(data => {
-                console.log(data);
-                alert('Employee details deleted successfully');
-            })
-            .catch(error => {
-                console.error(error);
-                alert('An error occurred while deleting employee details');
-            });
-    });
-});
+        .catch(error => {
+            console.error(error);
+            alert('An error occurred while updating employee details');
+        });
+}
 
-function showMessage(element, message) {
-    element.textContent = message;
-    setTimeout(() => {
-        element.textContent = '';
-    }, 5000);
+function deleteEmployeeDetails(data) {
+    const employee_id = data.employee_id;
+    fetch(`http://127.0.0.1:5000/delete/${employee_id}`, {
+        method: 'DELETE',
+    })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP ${response.status} ${response.statusText}`);
+            }
+            return response.json();
+        })
+        .then(data => {
+            console.log(data);
+            alert('Employee details deleted successfully');
+        })
+        .catch(error => {
+            console.error(error);
+            alert('An error occurred while deleting employee details');
+        });
 }
 
 document.getElementById('reset-btn').addEventListener('click', () => {
     const form = document.querySelector('form');
     form.reset();
+});
+
+
+function capturePhotos() {
+    const employee_id = document.querySelector('#employee-id').value;
+    const first_name = document.querySelector('#first-name').value;
+    const last_name = document.querySelector('#last-name').value;
+
+    const data = {
+        employee_id: employee_id,
+        first_name: first_name,
+        last_name: last_name
+    }
+
+    // Send a POST request to capture and preprocess the photos
+    fetch('http://127.0.0.1:5000/capture', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data)
+    })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP ${response.status} ${response.statusText}`);
+            }
+            return response.json();
+        })
+        .then(data => {
+            console.log(data);
+            alert('Photos captured and preprocessed successfully');
+        })
+        .catch(error => {
+            console.error(error);
+            alert('An error occurred while capturing and preprocessing photos');
+        });
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    const addPhotoBtn = document.getElementById('add-photo-btn');
+
+    addPhotoBtn.addEventListener('click', event => {
+        event.preventDefault();
+        capturePhotos();
+    });
 });
 
 function populateTable() {
@@ -303,3 +316,11 @@ function fillForm(employee) {
 
 // Call the populateTable function to load employee details on page load
 window.addEventListener('load', populateTable);
+
+function showMessage(element, message) {
+    element.textContent = message;
+    setTimeout(() => {
+        element.textContent = '';
+    }, 5000);
+}
+
