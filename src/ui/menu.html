@@ -86,18 +86,12 @@
                             </a>
                         </li>
                         <li class="option" data-value="option4">
-                            <a class="nav-link" title="Train Data">
-                                <i class='bx bx-bot'></i>
-                                <span class="links_name">Train Data</span>
-                            </a>
-                        </li>
-                        <li class="option" data-value="option5">
                             <a class="nav-link" title="Analytics">
                                 <i class='bx bx-pie-chart-alt-2'></i>
                                 <span class="links_name">Analytics</span>
                             </a>
                         </li>
-                        <li class="option" data-value="option6">
+                        <li class="option" data-value="option5">
                             <a class="nav-link" title="Settings">
                                 <i class='bx bx-cog'></i>
                                 <span class="links_name">Settings</span>
@@ -244,8 +238,8 @@
                                                                         </div>
                                                                     </div>
                                                                     <button type="submit" id="update-photo-btn"
-                                                                        class="btn btn-block update-photo-btn">Update
-                                                                        Photo</button>
+                                                                        class="btn btn-block update-photo-btn">Show
+                                                                        Photos</button>
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -309,7 +303,7 @@
                                             <div class="card mb-4">
                                                 <div class="card-body">
                                                     <h4 class="card-title pb-1">Attendance Information</h4>
-                                                    <form class="container">
+                                                    <form class="container att-form">
                                                         <div class="row">
                                                             <div class="col-md-6">
                                                                 <div class="form-group">
@@ -376,12 +370,12 @@
                                                                     style="margin-top: 102px;">
                                                                     <div class="row">
                                                                         <div class="col-md-6">
-                                                                            <button type="submit" id="update-btn"
-                                                                                class="btn btn-block update-btn">Update</button>
+                                                                            <button type="submit" id="att-update-btn"
+                                                                                class="btn btn-block att-update-btn">Update</button>
                                                                         </div>
                                                                         <div class="col-md-6">
-                                                                            <button type="submit" id="reset-btn"
-                                                                                class="btn btn-block reset-btn">Reset</button>
+                                                                            <button type="submit" id="att-reset-btn"
+                                                                                class="btn btn-block att-reset-btn">Reset</button>
                                                                         </div>
                                                                     </div>
                                                                 </div>
@@ -396,7 +390,24 @@
                                             <div class="card mb-4">
                                                 <div class="card-body">
                                                     <h4 class="card-title pb-1">Attendance Details</h4>
-
+                                                    <div class="table-responsive">
+                                                        <table id="attendance-table" class="table table-striped">
+                                                            <thead>
+                                                                <tr>
+                                                                    <th>Employee ID</th>
+                                                                    <th>First Name</th>
+                                                                    <th>Last Name</th>
+                                                                    <th>Department</th>
+                                                                    <th>Time</th>
+                                                                    <th>Date</th>
+                                                                    <th>Attendance Status</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                                <!-- Employee details rows will be added dynamically -->
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
@@ -415,37 +426,50 @@
                             <!-- Face Recognition Header -->
                             <div class="header">
                                 <div class="container-fluid p-0">
-                                    <p>Welcome to face recognition section. Here you can take attendance using camera.
+                                    <p>Welcome to face recognition section. Here you can take attendance using camera
+                                        and also train your data.
                                     </p>
                                 </div>
                             </div>
                             <!-- Face Recognition Content -->
                             <main class="recog-content">
-
+                                <section class="container-fluid">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="card">
+                                                <div class="card-title">Attendance</div>
+                                                <div class="card-text">Take attendance for today.</div>
+                                                <div class="button-container">
+                                                    <button type="submit" id="attendance-btn"
+                                                        class="btn btn-block attendance-btn">Start Attendance</button>
+                                                </div>
+                                            </div>
+                                            <div class="card">
+                                                <div class="card-title">Photos</div>
+                                                <div class="card-text">Photos of employee's face</div>
+                                                <div class="button-container">
+                                                    <button type="submit" id="attendance-btn"
+                                                        class="btn btn-block attendance-btn">Open</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="card">
+                                                <div class="card-title">Train Data</div>
+                                                <div class="card-text">Train face data for face recognition</div>
+                                                <div class="button-container">
+                                                    <button type="submit" id="train-btn"
+                                                        class="btn btn-block train-btn">Train Data</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </section>
                             </main>
                         </div>
                     </div>
 
                     <div class="home-section position-relative overflow-y-auto pt-3" id="option4-content">
-                        <!-- Train Data content -->
-                        <div class="container-fluid min-vh-100 p-0">
-                            <div class="container-fluid menu-header-container">
-                                <h1>Train Data</h1>
-                            </div>
-                            <!-- Train Data Header -->
-                            <div class="header">
-                                <div class="container-fluid p-0">
-                                    <p>Welcome to train data section. Here you can train your face datasets.</p>
-                                </div>
-                            </div>
-                            <!-- Train Data Content -->
-                            <main class="train-content">
-
-                            </main>
-                        </div>
-                    </div>
-
-                    <div class="home-section position-relative overflow-y-auto pt-3" id="option5-content">
                         <!-- Analytics content -->
                         <div class="container-fluid min-vh-100 p-0">
                             <div class="container-fluid menu-header-container">
@@ -464,7 +488,7 @@
                         </div>
                     </div>
 
-                    <div class="home-section position-relative overflow-y-auto pt-3" id="option6-content">
+                    <div class="home-section position-relative overflow-y-auto pt-3" id="option5-content">
                         <!-- Settings content -->
                         <div class="container-fluid min-vh-100 p-0">
                             <div class="container-fluid menu-header-container">

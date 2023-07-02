@@ -317,6 +317,11 @@ function fillForm(employee) {
 // Call the populateTable function to load employee details on page load
 window.addEventListener('load', populateTable);
 
+document.getElementById('att-reset-btn').addEventListener('click', () => {
+    const form = document.querySelector('att-form');
+    form.reset();
+});
+
 function showMessage(element, message) {
     element.textContent = message;
     setTimeout(() => {

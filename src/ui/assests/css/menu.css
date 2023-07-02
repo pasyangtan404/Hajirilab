@@ -327,7 +327,9 @@ body {
 .delete-btn,
 .reset-btn,
 .import-btn,
-.export-btn {
+.export-btn,
+.att-update-btn,
+.att-reset-btn {
     border-radius: 10px;
     width: 100px;
     background-color: #6495ED;
@@ -337,7 +339,9 @@ body {
 }
 
 .add-photo-btn,
-.update-photo-btn {
+.update-photo-btn,
+.attendance-btn,
+.train-btn {
     border-radius: 10px;
     width: 200px;
     background-color: #6495ED;
@@ -374,4 +378,46 @@ body {
     cursor: pointer;
     background-color: lightgrey;
     /* Add hover background color to rows */
+}
+
+.recog-content {
+    margin-top: 30px;
+}
+
+.recog-content .card {
+    border: none;
+    margin: 30px 7px 50px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, .05);
+    border-radius: .375rem;
+    padding: 10px;
+    transition: all .3s ease-in-out;
+}
+
+.recog-content .card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 15px rgba(0, 0, 0, .1);
+}
+
+.recog-content .card-title {
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 20px;
+}
+
+.recog-content .card-text {
+    font-size: 16px;
+    font-weight: 400;
+    margin-bottom: 20px;
+    color: #6c757d;
+}
+
+.recog-content .card-link {
+    font-size: 16px;
+    font-weight: 700;
+    color: #007bff;
+    text-decoration: none;
+}
+
+.recog-content .card-link:hover {
+    text-decoration: underline;
 }

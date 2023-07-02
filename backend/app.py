@@ -3,9 +3,18 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
 import os
 import cv2
+import numpy as np
+from skimage.feature import hog, local_binary_pattern
+from sklearn.svm import SVC
+import joblib
 
 app = Flask(__name__)
 CORS(app)
+
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://root:''@localhost/hajirilabdb'
+
+db = SQLAlchemy(app)
+
 #### Initializing VideoCapture object to access WebCam
 cap = cv2.VideoCapture(0)
 
@@ -15,15 +24,79 @@ if not os.path.exists(data_folder):
     os.makedirs(data_folder)
 
 def extract_faces(img):
-    face_detector = cv2.CascadeClassifier('D:/finalyearproject/hajirilab/backend/haarcascade_frontalface_default.xml')
+    face_detector = cv2.CascadeClassifier('D:/finalyearproject/hajirilab/detectors/haarcascade_frontalface_default.xml')
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     faces = face_detector.detectMultiScale(gray, scaleFactor=1.1, minNeighbors=5, minSize=(30, 30))
     return faces
 
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://root:''@localhost/hajirilabdb'
+def get_eyes(img):
+    eye_detector = cv2.CascadeClassifier('D:/finalyearproject/hajirilab/detectors/haarcascade_eye.xml')
+    gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+    eyes = eye_detector.detectMultiScale(gray, scaleFactor=1.1, minNeighbors=6, minSize=(30, 30))
+    return eyes
 
+def extract_hog_features(img, winSize, blockSize, blockStride, cellSize, nbins):
+    # Perform HOG feature extraction
+    hog_feature = hog(img, winSize=winSize, block_size=blockSize, block_stride=blockStride,
+                      cell_size=cellSize, orientations=nbins, visualize=False, multichannel=False)
+    return hog_feature
 
-db = SQLAlchemy(app)
+def extract_lbp_features(img, radius, neighbors):
+    # Perform LBP feature extraction on the image
+    lbp_feature = local_binary_pattern(img, neighbors, radius, method='uniform').flatten()
+
+    return lbp_feature
+
+def train_model():
+    # Set the parameters for HOG and LBP feature extraction
+    winSize = (64, 64)
+    blockSize = (16, 16)
+    blockStride = (8, 8)
+    cellSize = (8, 8)
+    nbins = 9
+    radius = 3
+    neighbors = 8
+    
+    # Set the input directory containing the face images
+    input_dir = 'D:/finalyearproject/hajirilab/faces'
+    
+    # Initialize lists to store features and labels
+    features = []
+    labels = []
+    
+    for name in os.listdir(input_dir):
+        for filename in os.listdir(os.path.join(input_dir, name)):
+            if filename.endswith('.jpg'):
+                # Load the pre-processed face image and extract the label from the filename
+                img = cv2.imread(os.path.join(input_dir, name, filename))
+                if img is None:
+                    print(f"Error loading image: {os.path.join(input_dir, name, filename)}")
+                    continue
+
+                # Extract HOG and LBP features
+                hog_feature = extract_hog_features(img, winSize, blockSize, blockStride, cellSize, nbins)
+                lbp_feature = extract_lbp_features(img, radius, neighbors)
+
+                # Concatenate HOG and LBP features
+                combined_feature = np.concatenate((hog_feature, lbp_feature))
+
+                # Extract the label from the image name
+                label = filename.split('_')[0]
+
+                # Append the features and label to the lists
+                features.append(combined_feature)
+                labels.append(label)
+
+    # Convert the lists to NumPy arrays
+    features = np.array(features)
+    labels = np.array(labels)
+
+    # Train the SVM model
+    model = SVC()
+    model.fit(features, labels)
+    
+    model_file = 'backend/face_recognition_model.pkl'
+    joblib.dump(model, model_file)
 
 class Users(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -35,7 +108,6 @@ class Users(db.Model):
         self.username = username
         self.password = password
         self.email = email
-
 
 # with app.app_context():
 #     db.create_all()
@@ -211,7 +283,15 @@ def capture():
                     # Draw bounding box and text on the frame
                     cv2.rectangle(frame, (x, y), (x+w, y+h), (255, 0, 20), 2)
                     cv2.putText(frame, f'Images Captured: {i}/30', (30, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 0, 20), 2, cv2.LINE_AA)
-                
+                    
+                    eyes = get_eyes(frame)
+                    for (ex, ey, ew, eh) in eyes:
+                        cx = int(ex + ew/2)
+                        cy = int(ey + eh/2)
+                        
+                        # Draw a dot on the eye center
+                        cv2.circle(frame, (cx, cy), 3, (255, 0, 20), -1)
+                    
                     if j%10==0:
                         # Save the image
                         image_path = os.path.join(folder_name, f'{employee_id}_{first_name}_{last_name}_{str(i)}.jpg')
@@ -260,6 +340,8 @@ def get_employee_details():
         return jsonify(employee_list)
     except Exception as e:
         return jsonify({'error': str(e)}), 500
+
+
 
 
 if __name__ == "__main__":
