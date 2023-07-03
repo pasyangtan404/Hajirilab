@@ -368,10 +368,14 @@ body {
 }
 
 .table th {
+    position: sticky; /* Make the table header sticky */
+    top: 0;
     border-top: 1px solid #dee2e6;
     border-bottom: 1px solid #dee2e6;
     border-right: 1px solid #dee2e6;
     white-space: nowrap;
+    background-color: #fff;
+    z-index: 1;
 }
 
 .table tbody tr:hover {

@@ -1,8 +1,11 @@
 from flask import Flask, jsonify, request
 from flask_sqlalchemy import SQLAlchemy
+from flask_marshmallow import Marshmallow
+from marshmallow import Schema, fields
 from flask_cors import CORS
 import os
 import cv2
+import time
 import numpy as np
 from skimage.feature import hog, local_binary_pattern
 from sklearn.svm import SVC
@@ -14,6 +17,7 @@ CORS(app)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://root:''@localhost/hajirilabdb'
 
 db = SQLAlchemy(app)
+ma = Marshmallow(app)
 
 #### Initializing VideoCapture object to access WebCam
 cap = cv2.VideoCapture(0)
@@ -98,10 +102,9 @@ def train_model():
                 
                 # Show the training image
                 cv2.imshow('Training...', img)
-                cv2.waitKey(1)  # Update the displayed image
+                cv2.waitKey(50)  # Update the displayed image
                 
-    # Close the training window
-    cv2.destroyWindow('Training...')
+    
     
     # Convert the lists to NumPy arrays
     features = np.array(features)
@@ -110,6 +113,9 @@ def train_model():
     # Train the SVM model
     model = SVC()
     model.fit(features, labels)
+    
+    # Close the training window
+    cv2.destroyWindow('Training...')
     
     # Evaluate the model
     accuracy = model.score(features, labels)
@@ -135,6 +141,13 @@ class Users(db.Model):
 # with app.app_context():
 #     db.create_all()
 
+class UserSchema(ma.Schema):
+    id = fields.Int()
+    username = fields.Str()
+    email = fields.Email()
+
+user_schema = UserSchema()
+
 # handle login requests
 @app.route('/login', methods=['POST'])
 def login():
@@ -149,13 +162,14 @@ def login():
     print(password)
 
     if user:
-        return jsonify({'success': True})
+        result = user_schema.dump(user)
+        return jsonify({'success': True, 'user': result})
     else:
         return jsonify({'success': False, 'message': 'Invalid username or password'})
     
 class Emp_details(db.Model):
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    employee_id = db.Column(db.String(20), unique=True, nullable=False)
+    id = db.Column(db.Integer, unique=True, autoincrement=True)
+    employee_id = db.Column(db.Integer, primary_key=True, nullable=False)
     first_name = db.Column(db.String(20), nullable=False)
     last_name = db.Column(db.String(20), nullable=False)
     gender = db.Column(db.String(10), nullable=False)
@@ -180,23 +194,33 @@ class Emp_details(db.Model):
         self.position = position
         self.photo_sample = photo_sample
 
+class EmployeeSchema(Schema):
+    employee_id = fields.Int()
+    first_name = fields.Str()
+    last_name = fields.Str()
+    gender = fields.Str()
+    dob = fields.Date()
+    email = fields.Email()
+    phone_num = fields.Str()
+    address = fields.Str()
+    department = fields.Str()
+    position = fields.Str()
+    photo_sample = fields.Str()
+
+
+employee_schema = EmployeeSchema()
+employees_schema = EmployeeSchema(many=True)
+
 @app.route('/save', methods=['POST'])
 def save_emp_details():
     try:
         print("Save button clicked!")
         data = request.get_json()
 
-        employee_id = data.get('employee_id')
-        first_name = data.get('first_name')
-        last_name = data.get('last_name')
-        gender = data.get('gender')
-        dob = data.get('dob')
-        email = data.get('email')
-        phone_num = data.get('phone_num')
-        address = data.get('address')
-        department = data.get('department')
-        position = data.get('position')
-        photo_sample = data.get('photo_sample')
+        # Deserialize and validate the data
+        emp_data = employee_schema.load(data)
+        
+        employee_id = emp_data['employee_id']
 
         # Check if employee with the same employee_id already exists
         existing_emp = Emp_details.query.filter_by(
@@ -205,8 +229,7 @@ def save_emp_details():
             return jsonify({'message': 'Employee details already exist'})
 
         else:
-            new_emp = Emp_details(employee_id, first_name, last_name, gender,
-                                  dob, email, phone_num, address, department, position, photo_sample)
+            new_emp = Emp_details(**emp_data)
 
             db.session.add(new_emp)
 
@@ -215,27 +238,29 @@ def save_emp_details():
             # Fetch all employee details from the database in order by employee ID
             all_emp_details = Emp_details.query.order_by(Emp_details.employee_id).all()
             
-            # Convert the employee details to a JSON response
-            emp_details_list = []
-            for emp_detail in all_emp_details:
-                emp_details_list.append({
-                    'employee_id': emp_detail.employee_id,
-                    'first_name': emp_detail.first_name,
-                    'last_name': emp_detail.last_name,
-                    'gender': emp_detail.gender,
-                    'dob': emp_detail.dob.strftime('%Y-%m-%d'),
-                    'email': emp_detail.email,
-                    'phone_num': emp_detail.phone_num,
-                    'address': emp_detail.address,
-                    'department': emp_detail.department,
-                    'position': emp_detail.position,
-                    'photo_sample': emp_detail.photo_sample
-                })
+            # Serialize the employee details
+            result = employees_schema.dump(all_emp_details)
                 
-            return jsonify({'message': 'Employee details saved successfully'})
+            return jsonify({'message': 'Employee details saved successfully', 'employees': result})
 
     except Exception as e:
         return jsonify({'error': str(e)}), 500
+
+class UpdateEmployeeSchema(Schema):
+    employee_id = fields.Int()
+    first_name = fields.String()
+    last_name = fields.String()
+    gender = fields.String()
+    dob = fields.Date()
+    email = fields.Email()
+    phone_num = fields.String()
+    address = fields.String()
+    department = fields.String()
+    position = fields.String()
+    photo_sample = fields.String()
+    
+update_employee_schema = UpdateEmployeeSchema()
+
 
 @app.route('/update/<employee_id>', methods=['PUT'])
 def update_emp_details(employee_id):
@@ -245,13 +270,14 @@ def update_emp_details(employee_id):
         if emp:
             data = request.get_json()
             
-            fields_to_update = ['first_name', 'last_name', 'gender', 'dob', 'email', 'phone_num', 'address', 'department', 'position', 'photo_sample']
+           # Deserialize and validate the update data
+            update_data = update_employee_schema.load(data)
             
             is_modified = False
              
-            for field in fields_to_update:
-                if getattr(emp, field) != data.get(field):
-                    setattr(emp, field, data.get(field))
+            for field, value in update_data.items():
+                if getattr(emp, field) != value:
+                    setattr(emp, field, value)
                     is_modified = True
             
             if is_modified:
@@ -301,50 +327,62 @@ def capture():
         
             # Open camera and capture 50 photos
             cap = cv2.VideoCapture(0)
+            
+            # Set window properties to make it appear in front of all other windows
+            cv2.namedWindow('HajiriLab(Taking Photos...)', cv2.WINDOW_NORMAL)
+            
+            # Position the window in the center of the screen
+            cv2.moveWindow('HajiriLab(Taking Photos...)', 400, 300)
         
             i,j = 0,0
+            ready_start_time = time.time()
             while 1:
                 _,frame = cap.read()
-                faces = extract_faces(frame)
+                if time.time() - ready_start_time < 3:
+                    # Display "Ready" message for 3 seconds
+                    cv2.putText(frame, 'Ready', (30, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 0, 20), 2, cv2.LINE_AA)
+                else:
+                    faces = extract_faces(frame)
  
-                for (x, y, w, h) in faces:
-                    face_img = frame[y:y+h, x:x+w]
-                    face_img = cv2.cvtColor(face_img, cv2.COLOR_BGR2GRAY)
+                    for (x, y, w, h) in faces:
+                        face_img = frame[y:y+h, x:x+w]
+                        face_img = cv2.cvtColor(face_img, cv2.COLOR_BGR2GRAY)
                     
-                    face_img = cv2.resize(face_img, (120, 120))
+                        face_img = cv2.resize(face_img, (120, 120))
                     
-                    # Normalizing the pixel values of the face image to be between 0 and 1
-                    face_img = face_img.astype(float) / 255.0
+                        # Normalizing the pixel values of the face image to be between 0 and 1
+                        face_img = face_img.astype(float) / 255.0
         
-                    # Defining the gamma value
-                    gamma = 1.5
+                        # Defining the gamma value
+                        gamma = 1.5
 
-                    # Applying gamma correction
-                    corrected = cv2.pow(face_img/255.0, gamma)
+                        # Applying gamma correction
+                        corrected = cv2.pow(face_img/255.0, gamma)
 
-                    # Normalizing the output image
-                    face_img = cv2.normalize(corrected, None, 0, 255, cv2.NORM_MINMAX, dtype=cv2.CV_8U)
+                        # Normalizing the output image
+                        face_img = cv2.normalize(corrected, None, 0, 255, cv2.NORM_MINMAX, dtype=cv2.CV_8U)
                     
-                    # Draw bounding box and text on the frame
-                    cv2.rectangle(frame, (x, y), (x+w, y+h), (255, 0, 20), 2)
-                    cv2.putText(frame, f'Images Captured: {i}/50', (30, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 0, 20), 2, cv2.LINE_AA)
+                        # Draw bounding box and text on the frame
+                        cv2.rectangle(frame, (x, y), (x+w, y+h), (255, 0, 20), 2)
+                        cv2.putText(frame, f'Images Captured: {i}/50', (30, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 0, 20), 2, cv2.LINE_AA)
                     
-                    eyes = get_eyes(frame)
-                    for (ex, ey, ew, eh) in eyes:
-                        cx = int(ex + ew/2)
-                        cy = int(ey + eh/2)
+                        eyes = get_eyes(frame)
+                        for (ex, ey, ew, eh) in eyes:
+                            cx = int(ex + ew/2)
+                            cy = int(ey + eh/2)
                         
-                        # Draw a dot on the eye center
-                        cv2.circle(frame, (cx, cy), 3, (255, 0, 20), -1)
+                            # Draw a dot on the eye center
+                            cv2.circle(frame, (cx, cy), 3, (255, 0, 20), -1)
                     
-                    if j%10==0:
-                        # Save the image
-                        image_path = os.path.join(folder_name, f'{employee_id}_{first_name}_{last_name}_{str(i+1)}.jpg')
-                        cv2.imwrite(image_path, face_img)
-                        i += 1
-                    j+=1
-                if j==500:
-                    break
+                        if j%10==0:
+                            # Save the image
+                            image_path = os.path.join(folder_name, f'{employee_id}_{first_name}_{last_name}_{str(i+1)}.jpg')
+                            cv2.imwrite(image_path, face_img)
+                            i += 1
+                        j+=1
+                    if j==500:
+                        break
+                    
                 cv2.imshow('HajiriLab(Taking Photos...)',frame)
                 if cv2.waitKey(1)==27:
                     break
@@ -366,23 +404,8 @@ def capture():
 def get_employee_details():
     try:
         employees = Emp_details.query.all()
-        employee_list = []
-        for employee in employees:
-            employee_dict = {
-                'employee_id': employee.employee_id,
-                'first_name': employee.first_name,
-                'last_name': employee.last_name,
-                'gender': employee.gender,
-                'dob': str(employee.dob),
-                'email': employee.email,
-                'phone_num': employee.phone_num,
-                'address': employee.address,
-                'department': employee.department,
-                'position': employee.position,
-                'photo_sample': employee.photo_sample
-            }
-            employee_list.append(employee_dict)
-        return jsonify(employee_list)
+        serialized_data = employees_schema.dump(employees)
+        return jsonify(serialized_data)
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
