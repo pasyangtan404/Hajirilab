@@ -5,4 +5,3 @@ raw_dataset/
 .vscode
 face_data
 preprocess.ipynb
-backend/face_recognition_model.pkl
