@@ -311,7 +311,7 @@ def capture():
                     face_img = frame[y:y+h, x:x+w]
                     face_img = cv2.cvtColor(face_img, cv2.COLOR_BGR2GRAY)
                     
-                    face_img = cv2.resize(face_img, (90, 90))
+                    face_img = cv2.resize(face_img, (120, 120))
                     
                     # Normalizing the pixel values of the face image to be between 0 and 1
                     face_img = face_img.astype(float) / 255.0
