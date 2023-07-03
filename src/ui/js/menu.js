@@ -322,6 +322,32 @@ document.getElementById('att-reset-btn').addEventListener('click', () => {
     form.reset();
 });
 
+
+// Get the train button element
+const trainButton = document.getElementById('train-btn');
+
+// Add event listener to the train button
+trainButton.addEventListener('click', () => {
+    // Send a POST request to the server to trigger the training
+    fetch('http://127.0.0.1:5000/train', {
+        method: 'POST'
+    })
+    .then(response => response.json())
+    .then(data => {
+        // Handle the response from the server
+        console.log(data);
+        if (data.success) {
+            alert('Model trained successfully!');
+        } else {
+            alert('An error occurred during training.');
+        }
+    })
+    .catch(error => {
+        console.error(error);
+        alert('An error occurred while sending the training request.');
+    });
+});
+
 function showMessage(element, message) {
     element.textContent = message;
     setTimeout(() => {

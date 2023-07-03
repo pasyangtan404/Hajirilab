@@ -3,4 +3,5 @@ preprocessed_dataset/
 raw_dataset/
 .venv
 .vscode
-faces
+face_data
+preprocess.ipynb

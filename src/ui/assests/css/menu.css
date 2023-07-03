@@ -364,7 +364,7 @@ body {
 
 .table-responsive {
     overflow-y: auto;
-    max-height: 300px;
+    max-height: 65vh
 }
 
 .table th {

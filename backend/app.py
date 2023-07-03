@@ -19,7 +19,7 @@ db = SQLAlchemy(app)
 cap = cv2.VideoCapture(0)
 
 # Create the 'faces' folder if it doesn't exist
-data_folder = 'D:/finalyearproject/hajirilab/faces'
+data_folder = 'D:/finalyearproject/hajirilab/face_data'
 if not os.path.exists(data_folder):
     os.makedirs(data_folder)
 
@@ -35,10 +35,10 @@ def get_eyes(img):
     eyes = eye_detector.detectMultiScale(gray, scaleFactor=1.1, minNeighbors=6, minSize=(30, 30))
     return eyes
 
-def extract_hog_features(img, winSize, blockSize, blockStride, cellSize, nbins):
+def extract_hog_features(img, nbins, blockSize, cellSize):
     # Perform HOG feature extraction
-    hog_feature = hog(img, winSize=winSize, block_size=blockSize, block_stride=blockStride,
-                      cell_size=cellSize, orientations=nbins, visualize=False, multichannel=False)
+    hog_feature = hog(img, orientations= nbins, pixels_per_cell=blockSize,
+                      cells_per_block=cellSize, visualize=False)
     return hog_feature
 
 def extract_lbp_features(img, radius, neighbors):
@@ -49,16 +49,14 @@ def extract_lbp_features(img, radius, neighbors):
 
 def train_model():
     # Set the parameters for HOG and LBP feature extraction
-    winSize = (64, 64)
-    blockSize = (16, 16)
-    blockStride = (8, 8)
-    cellSize = (8, 8)
+    blockSize = (8, 8)
+    cellSize = (2, 2)
     nbins = 9
     radius = 3
     neighbors = 8
     
     # Set the input directory containing the face images
-    input_dir = 'D:/finalyearproject/hajirilab/faces'
+    input_dir = 'D:/finalyearproject/hajirilab/face_data'
     
     # Initialize lists to store features and labels
     features = []
@@ -72,10 +70,17 @@ def train_model():
                 if img is None:
                     print(f"Error loading image: {os.path.join(input_dir, name, filename)}")
                     continue
-
+                # Convert the image to grayscale
+                img_gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+                face_img = cv2.resize(img_gray, (120, 120))
+                
                 # Extract HOG and LBP features
-                hog_feature = extract_hog_features(img, winSize, blockSize, blockStride, cellSize, nbins)
-                lbp_feature = extract_lbp_features(img, radius, neighbors)
+                hog_feature = extract_hog_features(face_img, nbins, blockSize, cellSize)
+                lbp_feature = extract_lbp_features(face_img, radius, neighbors)
+                
+                # print(hog_feature.shape)
+                # print(lbp_feature.shape)
+                # print()
 
                 # Concatenate HOG and LBP features
                 combined_feature = np.concatenate((hog_feature, lbp_feature))
@@ -86,7 +91,18 @@ def train_model():
                 # Append the features and label to the lists
                 features.append(combined_feature)
                 labels.append(label)
+                
+                cv2.namedWindow('Training...', cv2.WINDOW_NORMAL)
+                cv2.resizeWindow('Training...', 800, 600)
 
+                
+                # Show the training image
+                cv2.imshow('Training...', img)
+                cv2.waitKey(1)  # Update the displayed image
+                
+    # Close the training window
+    cv2.destroyWindow('Training...')
+    
     # Convert the lists to NumPy arrays
     features = np.array(features)
     labels = np.array(labels)
@@ -95,8 +111,15 @@ def train_model():
     model = SVC()
     model.fit(features, labels)
     
+    # Evaluate the model
+    accuracy = model.score(features, labels)
+
+    print('Accuracy: {}'.format(accuracy))
+    
     model_file = 'backend/face_recognition_model.pkl'
     joblib.dump(model, model_file)
+    
+    
 
 class Users(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -188,7 +211,27 @@ def save_emp_details():
             db.session.add(new_emp)
 
             db.session.commit()
-
+            
+            # Fetch all employee details from the database in order by employee ID
+            all_emp_details = Emp_details.query.order_by(Emp_details.employee_id).all()
+            
+            # Convert the employee details to a JSON response
+            emp_details_list = []
+            for emp_detail in all_emp_details:
+                emp_details_list.append({
+                    'employee_id': emp_detail.employee_id,
+                    'first_name': emp_detail.first_name,
+                    'last_name': emp_detail.last_name,
+                    'gender': emp_detail.gender,
+                    'dob': emp_detail.dob.strftime('%Y-%m-%d'),
+                    'email': emp_detail.email,
+                    'phone_num': emp_detail.phone_num,
+                    'address': emp_detail.address,
+                    'department': emp_detail.department,
+                    'position': emp_detail.position,
+                    'photo_sample': emp_detail.photo_sample
+                })
+                
             return jsonify({'message': 'Employee details saved successfully'})
 
     except Exception as e:
@@ -256,7 +299,7 @@ def capture():
             if not os.path.exists(folder_name):
                 os.makedirs(folder_name)
         
-            # Open camera and capture 20 photos
+            # Open camera and capture 50 photos
             cap = cv2.VideoCapture(0)
         
             i,j = 0,0
@@ -267,6 +310,8 @@ def capture():
                 for (x, y, w, h) in faces:
                     face_img = frame[y:y+h, x:x+w]
                     face_img = cv2.cvtColor(face_img, cv2.COLOR_BGR2GRAY)
+                    
+                    face_img = cv2.resize(face_img, (90, 90))
                     
                     # Normalizing the pixel values of the face image to be between 0 and 1
                     face_img = face_img.astype(float) / 255.0
@@ -282,7 +327,7 @@ def capture():
                     
                     # Draw bounding box and text on the frame
                     cv2.rectangle(frame, (x, y), (x+w, y+h), (255, 0, 20), 2)
-                    cv2.putText(frame, f'Images Captured: {i}/30', (30, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 0, 20), 2, cv2.LINE_AA)
+                    cv2.putText(frame, f'Images Captured: {i}/50', (30, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 0, 20), 2, cv2.LINE_AA)
                     
                     eyes = get_eyes(frame)
                     for (ex, ey, ew, eh) in eyes:
@@ -294,11 +339,11 @@ def capture():
                     
                     if j%10==0:
                         # Save the image
-                        image_path = os.path.join(folder_name, f'{employee_id}_{first_name}_{last_name}_{str(i)}.jpg')
+                        image_path = os.path.join(folder_name, f'{employee_id}_{first_name}_{last_name}_{str(i+1)}.jpg')
                         cv2.imwrite(image_path, face_img)
                         i += 1
                     j+=1
-                if j==300:
+                if j==500:
                     break
                 cv2.imshow('HajiriLab(Taking Photos...)',frame)
                 if cv2.waitKey(1)==27:
@@ -341,8 +386,18 @@ def get_employee_details():
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
+@app.route('/train', methods=['POST'])
+def train_data():
+    try:
+        # Call the train_model function to train the model
+        train_model()
 
+        # Return a success response
+        return jsonify({'success': True})
 
+    except Exception as e:
+        # Return an error response if an exception occurs during training
+        return jsonify({'success': False, 'error': str(e)}), 500
 
 if __name__ == "__main__":
     app.run(debug=True)
