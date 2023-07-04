@@ -348,6 +348,39 @@ trainButton.addEventListener('click', () => {
     });
 });
 
+function takeAttendance() {
+    fetch('http://127.0.0.1:5000/take_attendance', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({})
+    })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP ${response.status} ${response.statusText}`);
+            }
+            return response.json();
+        })
+        .then(data => {
+            console.log(data);
+            alert('Attendance taken successfully');
+        })
+        .catch(error => {
+            console.error(error);
+            alert('An error occurred while taking attendance');
+        });
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    const takeAttendanceBtn = document.getElementById('attendance-btn');
+
+    takeAttendanceBtn.addEventListener('click', event => {
+        event.preventDefault();
+        takeAttendance();
+    });
+});
+
 function showMessage(element, message) {
     element.textContent = message;
     setTimeout(() => {

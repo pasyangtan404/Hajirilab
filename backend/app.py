@@ -6,7 +6,9 @@ from flask_cors import CORS
 import os
 import cv2
 import time
+from datetime import datetime
 import numpy as np
+import csv
 from skimage.feature import hog, local_binary_pattern
 from sklearn.svm import SVC
 import joblib
@@ -19,11 +21,22 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://root:''@localhost/hajirilabdb'
 db = SQLAlchemy(app)
 ma = Marshmallow(app)
 
+
+ # Set the parameters for HOG and LBP feature extraction
+blockSize = (8, 8)
+cellSize = (2, 2)
+nbins = 9
+radius = 3
+neighbors = 8
+    
 #### Initializing VideoCapture object to access WebCam
 cap = cv2.VideoCapture(0)
 
-# Create the 'faces' folder if it doesn't exist
-data_folder = 'D:/finalyearproject/hajirilab/face_data'
+# Get the directory of the app.py file
+current_dir = os.path.dirname(os.path.abspath(__file__))
+    
+# Specify the data folder path relative to the current directory
+data_folder = os.path.join(current_dir, '../face_data')
 if not os.path.exists(data_folder):
     os.makedirs(data_folder)
 
@@ -39,6 +52,32 @@ def get_eyes(img):
     eyes = eye_detector.detectMultiScale(gray, scaleFactor=1.1, minNeighbors=6, minSize=(30, 30))
     return eyes
 
+def preprocess_face(img):
+    # Convert the face image to grayscale
+    face_img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+    
+     # Resize the face image to a fixed size                
+    face_img = cv2.resize(face_img, (120, 120))
+                    
+    # Normalizing the pixel values of the face image to be between 0 and 1
+    face_img = face_img.astype(float) / 255.0
+        
+    # Defining the gamma value
+    gamma = 1.5
+
+    # Applying gamma correction
+    corrected = cv2.pow(face_img/255.0, gamma)
+
+    # Normalizing the output image
+    face_img = cv2.normalize(corrected, None, 0, 255, cv2.NORM_MINMAX, dtype=cv2.CV_8U)
+    
+    return face_img
+    
+def draw_frame(frame, x, y, w, h, color, text):
+    # Draw the bounding box and display information about the recognized face
+    cv2.rectangle(frame, (x, y), (x+w, y+h), color, 2)
+    cv2.putText(frame, text, (30, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, color, 2, cv2.LINE_AA)
+
 def extract_hog_features(img, nbins, blockSize, cellSize):
     # Perform HOG feature extraction
     hog_feature = hog(img, orientations= nbins, pixels_per_cell=blockSize,
@@ -51,16 +90,9 @@ def extract_lbp_features(img, radius, neighbors):
 
     return lbp_feature
 
-def train_model():
-    # Set the parameters for HOG and LBP feature extraction
-    blockSize = (8, 8)
-    cellSize = (2, 2)
-    nbins = 9
-    radius = 3
-    neighbors = 8
-    
-    # Set the input directory containing the face images
-    input_dir = 'D:/finalyearproject/hajirilab/face_data'
+def train_model():  
+    # Specify the input directory path relative to the current directory
+    input_dir = os.path.join(current_dir, '../face_data')
     
     # Initialize lists to store features and labels
     features = []
@@ -122,10 +154,25 @@ def train_model():
 
     print('Accuracy: {}'.format(accuracy))
     
-    model_file = 'backend/face_recognition_model.pkl'
-    joblib.dump(model, model_file)
+    # Specify the path for the model file
+    model_file_path = os.path.join(current_dir, '..', 'face_recognition_model.pkl')
+    joblib.dump(model, model_file_path)
     
-    
+def recognize_face(img):
+    # Load the trained face recognition model
+    model_file_path = os.path.join(current_dir, '..', 'face_recognition_model.pkl')
+    model = joblib.load(model_file_path)
+
+    # Extract features from the face image
+    hog_feature = extract_hog_features(img, nbins, blockSize, cellSize)
+    lbp_feature = extract_lbp_features(img, radius, neighbors)
+    combined_feature = np.concatenate((hog_feature, lbp_feature))
+
+    # Predict the label (employee_id) of the face using the trained model
+    predicted_label = model.predict([combined_feature])[0]
+    confidence = model.decision_function([combined_feature])[0]
+
+    return predicted_label, confidence
 
 class Users(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -332,7 +379,7 @@ def capture():
             cv2.namedWindow('HajiriLab(Taking Photos...)', cv2.WINDOW_NORMAL)
             
             # Position the window in the center of the screen
-            cv2.moveWindow('HajiriLab(Taking Photos...)', 400, 300)
+            cv2.moveWindow('HajiriLab(Taking Photos...)', 400, 100)
         
             i,j = 0,0
             ready_start_time = time.time()
@@ -346,25 +393,13 @@ def capture():
  
                     for (x, y, w, h) in faces:
                         face_img = frame[y:y+h, x:x+w]
-                        face_img = cv2.cvtColor(face_img, cv2.COLOR_BGR2GRAY)
-                    
-                        face_img = cv2.resize(face_img, (120, 120))
-                    
-                        # Normalizing the pixel values of the face image to be between 0 and 1
-                        face_img = face_img.astype(float) / 255.0
-        
-                        # Defining the gamma value
-                        gamma = 1.5
-
-                        # Applying gamma correction
-                        corrected = cv2.pow(face_img/255.0, gamma)
-
-                        # Normalizing the output image
-                        face_img = cv2.normalize(corrected, None, 0, 255, cv2.NORM_MINMAX, dtype=cv2.CV_8U)
+                        # Preprocess the face image
+                        face_img = preprocess_face(face_img)
                     
                         # Draw bounding box and text on the frame
-                        cv2.rectangle(frame, (x, y), (x+w, y+h), (255, 0, 20), 2)
-                        cv2.putText(frame, f'Images Captured: {i}/50', (30, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 0, 20), 2, cv2.LINE_AA)
+                        color = (255, 0, 20)
+                        info_text = f'Images Captured: {i}/50'
+                        draw_frame(frame, x, y,w, h, color, info_text)
                     
                         eyes = get_eyes(frame)
                         for (ex, ey, ew, eh) in eyes:
@@ -421,6 +456,71 @@ def train_data():
     except Exception as e:
         # Return an error response if an exception occurs during training
         return jsonify({'success': False, 'error': str(e)}), 500
+    
+@app.route('/take_attendance', methods=['POST'])
+def take_attendance():
+    try:
+        # Set up the video capture
+        cap = cv2.VideoCapture(0)
+
+        while True:
+            # Capture frame-by-frame
+            ret, frame = cap.read()
+
+            faces = extract_faces(frame)
+
+            for (x, y, w, h) in faces:
+                face_img = frame[y:y+h, x:x+w]
+
+                # Preprocess the face image
+                preprocessed_face = preprocess_face(face_img)
+
+                # Recognize the face and retrieve employee details
+                predicted_label, confidence = recognize_face(preprocessed_face)
+                employee = Emp_details.query.filter_by(employee_id=predicted_label).first()
+
+                if confidence[0] >= 0.77:
+                    # Face recognized
+                    attendance_status = 'Present'
+                    color = (0, 255, 0)  # Green frame
+                    if employee:
+                        info_text = f"ID: {employee.employee_id}  Name: {employee.first_name} {employee.last_name}"
+                    else:
+                        info_text = "Unknown"
+                else:
+                    # Face unrecognized
+                    attendance_status = 'Absent'
+                    employee = None
+                    color = (0, 0, 255)  # Red frame
+                    info_text = "Unknown"
+
+                # Draw the frame and display information
+                draw_frame(frame, x, y, w, h, color, info_text)
+
+                # Create attendance record in the CSV file
+                if employee:
+                    attendance_data = [employee.employee_id, employee.first_name, employee.last_name,
+                                       employee.department, datetime.now().strftime('%H:%M:%S'),
+                                       datetime.now().strftime('%Y-%m-%d'), attendance_status]
+                    with open('attendance.csv', 'a', newline='') as file:
+                        writer = csv.writer(file)
+                        writer.writerow(attendance_data)
+
+            # Display the frame
+            cv2.imshow('HajiriLab(Taking Attendance...)', frame)
+
+            # Break the loop if the Esc key is pressed
+            if cv2.waitKey(1) == 27:
+                break
+
+        # Release the video capture
+        cap.release()
+        cv2.destroyAllWindows()
+
+        return jsonify({'message': 'Attendance taken successfully'})
+
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
 
 if __name__ == "__main__":
     app.run(debug=True)
