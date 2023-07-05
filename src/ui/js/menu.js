@@ -59,7 +59,13 @@ options.forEach(function (option) {
 /*----------- for save, update and delete button ---------------*/
 
 const form = document.querySelector('form');
-const messageElement = document.getElementById('message');
+const modal = document.getElementById('myModal');
+const modalTitle = document.getElementById('modalTitle');
+const confirmModal = document.getElementById('confirmModal');
+const confirmModalTitle = document.getElementById('confirmModalTitle');
+const closeBtns = document.getElementById('btn-close');
+const okBtn = document.getElementById('ok-btn');
+const confirmYesBtn = document.getElementById('confirmYesBtn');
 
 form.addEventListener('submit', event => {
     event.preventDefault();
@@ -73,7 +79,7 @@ form.addEventListener('submit', event => {
     const address = document.querySelector('#address').value;
     const department = document.querySelector('#department').value;
     const position = document.querySelector('#position').value;
-    const photo_sample = document.querySelector('input[name="optionsRadios"]:checked').value;
+    const photo_sample = "No"
 
     console.log(first_name)
     console.log(last_name)
@@ -95,11 +101,46 @@ form.addEventListener('submit', event => {
     if (event.submitter.id === 'save-btn') {
         saveEmployeeDetails(data);
     } else if (event.submitter.id === 'update-btn') {
-        updateEmployeeDetails(data);
+        showConfirmationModal('Update Confirmation', 'Are you sure you want to update the employee details?', () => {
+            updateEmployeeDetails(data);
+        });
     } else if (event.submitter.id === 'delete-btn') {
-        deleteEmployeeDetails(data);
+        showConfirmationModal('Delete Confirmation', 'Are you sure you want to delete the employee details?', () => {
+            deleteEmployeeDetails(data);
+        });
     }
 });
+
+okBtn.addEventListener('click', () => {
+    hideModal()
+});
+
+closeBtns.addEventListener('click', () => {
+    hideModal()
+});
+
+function showModal(title, text) {
+    modalTitle.textContent = title;
+    modal.classList.remove('d-none');
+}
+
+function hideModal() {
+    modal.classList.add('d-none');
+}
+
+function showConfirmationModal(title, text, callback) {
+    confirmModalTitle.textContent = title;
+    confirmModal.classList.remove('d-none');
+    
+    confirmYesBtn.addEventListener('click', () => {
+        hideConfirmationModal();
+        callback();
+    });
+}
+
+function hideConfirmationModal() {
+    confirmModal.classList.add('d-none');
+}
 
 function saveEmployeeDetails(data) {
     fetch('http://127.0.0.1:5000/save', {
@@ -116,14 +157,15 @@ function saveEmployeeDetails(data) {
         .then(data => {
             console.log(data);
             if (data.message === 'Employee details saved successfully') {
-                showMessage(messageElement, 'Employee details saved successfully');
+                showModal('Employee details saved successfully');
+                window.location.reload();
             } else if (data.message === 'Employee details already exist') {
-                showMessage(messageElement, 'Employee details already exist');
+                showModal('Employee details already exist');
             }
         })
         .catch(error => {
             console.error(error);
-            showMessage(messageElement, 'An error occurred while saving employee details');
+            showModal('An error occurred while saving employee details');
         });
 }
 
@@ -144,11 +186,13 @@ function updateEmployeeDetails(data) {
         .then(data => {
             console.log(data);
             if (data.updated === true) {
-                alert('Employee details updated successfully');
+                showModal('Employee details updated successfully');
+                window.location.reload();
             } else if (data.updated === false) {
-                alert('No changes made');
+                showModal('No changes made');
+                window.location.reload();
             } else {
-                alert('An error occurred while updating employee details');
+                showModal('An error occurred while updating employee details');
             }
         })
         .catch(error => {
@@ -170,11 +214,12 @@ function deleteEmployeeDetails(data) {
         })
         .then(data => {
             console.log(data);
-            alert('Employee details deleted successfully');
+            showModal('Employee details deleted successfully');
+            window.location.reload();
         })
         .catch(error => {
             console.error(error);
-            alert('An error occurred while deleting employee details');
+            showModal('An error occurred while deleting employee details');
         });
 }
 
@@ -311,7 +356,6 @@ function fillForm(employee) {
     document.querySelector('#address').value = employee.address;
     document.querySelector('#department').value = employee.department;
     document.querySelector('#position').value = employee.position;
-    document.querySelector(`input[name="optionsRadios"][value="${employee.photo_sample}"]`).checked = true;
 }
 
 // Call the populateTable function to load employee details on page load
@@ -332,24 +376,24 @@ trainButton.addEventListener('click', () => {
     fetch('http://127.0.0.1:5000/train', {
         method: 'POST'
     })
-    .then(response => response.json())
-    .then(data => {
-        // Handle the response from the server
-        console.log(data);
-        if (data.success) {
-            alert('Model trained successfully!');
-        } else {
-            alert('An error occurred during training.');
-        }
-    })
-    .catch(error => {
-        console.error(error);
-        alert('An error occurred while sending the training request.');
-    });
+        .then(response => response.json())
+        .then(data => {
+            // Handle the response from the server
+            console.log(data);
+            if (data.success) {
+                alert('Model trained successfully!');
+            } else {
+                alert('An error occurred during training.');
+            }
+        })
+        .catch(error => {
+            console.error(error);
+            alert('An error occurred while sending the training request.');
+        });
 });
 
 function takeAttendance() {
-    fetch('http://127.0.0.1:5000/take_attendance', {
+    fetch('http://127.0.0.1:5000/attendance', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -381,10 +425,46 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 
-function showMessage(element, message) {
-    element.textContent = message;
-    setTimeout(() => {
-        element.textContent = '';
-    }, 5000);
+function showPhotos() {
+    const employee_id = document.querySelector('#employee-id').value;
+    const first_name = document.querySelector('#first-name').value;
+    const last_name = document.querySelector('#last-name').value;
+
+    const data = {
+        employee_id: employee_id,
+        first_name: first_name,
+        last_name: last_name
+    }
+
+    // Send a POST request to capture and preprocess the photos
+    fetch('http://127.0.0.1:5000/show', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data)
+    })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP ${response.status} ${response.statusText}`);
+            }
+            return response.json();
+        })
+        .then(data => {
+            console.log(data);
+            alert('Folder opened successfully');
+        })
+        .catch(error => {
+            console.error(error);
+            alert('An error occurred while opening the folder');
+        });
 }
 
+document.addEventListener('DOMContentLoaded', () => {
+    const showPhotoBtn = document.getElementById('show-photo-btn');
+
+    showPhotoBtn.addEventListener('click', event => {
+        event.preventDefault();
+        showPhotos();
+    });
+});

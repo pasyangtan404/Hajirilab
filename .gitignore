@@ -6,3 +6,4 @@ raw_dataset/
 face_data
 preprocess.ipynb
 face_recognition_model.pkl
+modeltrain.ipynb

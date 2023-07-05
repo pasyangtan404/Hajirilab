@@ -304,7 +304,7 @@ body {
 
 .card-body .form-group {
     border-radius: 0;
-    margin-bottom: 12px;
+    margin-bottom: 17px;
 }
 
 .form-control {
@@ -339,7 +339,7 @@ body {
 }
 
 .add-photo-btn,
-.update-photo-btn,
+.show-photo-btn,
 .attendance-btn,
 .train-btn {
     border-radius: 10px;
@@ -352,6 +352,11 @@ body {
 
 .button-container {
     text-align: center;
+}
+
+.button-container2 {
+    text-align: center;
+    margin-top: 42px;
 }
 
 .card-body .btn:hover {
@@ -368,7 +373,8 @@ body {
 }
 
 .table th {
-    position: sticky; /* Make the table header sticky */
+    position: sticky;
+    /* Make the table header sticky */
     top: 0;
     border-top: 1px solid #dee2e6;
     border-bottom: 1px solid #dee2e6;
@@ -424,4 +430,43 @@ body {
 
 .recog-content .card-link:hover {
     text-decoration: underline;
+}
+
+/* Add this CSS to your existing CSS or in a separate file
+.modal {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-dialog {
+    margin: 0;
+}
+
+
+.modal-body {
+    padding: 20px;
+}
+
+/* Style the modal footers */
+.modal-footer {
+    padding: 10px 20px;
+}
+
+.modal-content {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 5px;
+    text-align: center;
+} */
+
+.ok-btn,
+.no-btn,
+.yes-btn {
+    padding: 8px 20px;
+    background-color: #6495ED;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
 }

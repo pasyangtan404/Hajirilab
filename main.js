@@ -1,4 +1,4 @@
-const { app, ipcMain, BrowserWindow, Menu } = require("electron")
+const { app, ipcMain, BrowserWindow, Menu} = require("electron")
 require('electron-reload')(__dirname)
 Menu.setApplicationMenu(false)
 

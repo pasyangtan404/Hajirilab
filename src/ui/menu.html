@@ -129,7 +129,6 @@
                                                 <div class="card-body">
                                                     <h4 class="card-title pb-1">Manage Information</h4>
                                                     <form class="container">
-                                                        <span id="message"></span>
                                                         <div class="row">
                                                             <div class="col-md-6">
                                                                 <div class="form-group">
@@ -165,13 +164,13 @@
                                                                     <textarea class="form-control" id="address" rows="3"
                                                                         required></textarea>
                                                                 </div>
-                                                                <div class="form-check mb-2">
+                                                                <!-- <div class="form-check mb-2">
                                                                     <input class="form-check-input" type="radio"
                                                                         name="optionsRadios" id="optionsRadios1"
                                                                         value="Yes">
                                                                     <label class="form-check-label"
                                                                         for="optionsRadios1">Take Photo</label>
-                                                                </div>
+                                                                </div> -->
                                                                 <div class="button-container">
                                                                     <div class="row">
                                                                         <div class="col-md-6 mb-2">
@@ -185,7 +184,7 @@
                                                                     </div>
                                                                     <button type="submit" id="add-photo-btn"
                                                                         class="btn btn-block add-photo-btn">Add
-                                                                        Photo</button>
+                                                                        Photos</button>
                                                                 </div>
                                                             </div>
                                                             <div class="col-md-6">
@@ -195,12 +194,14 @@
                                                                     <select class="form-select" id="department"
                                                                         required>
                                                                         <option value="">Select</option>
-                                                                        <option value="Administration">Administration</option>
+                                                                        <option value="Administration">Administration
+                                                                        </option>
                                                                         <option value="Finance">Finance</option>
                                                                         <option value="HR">HR</option>
                                                                         <option value="IT">IT</option>
                                                                         <option value="Operation">Operation</option>
-                                                                        <option value="Sales and Marketing">Sales and Marketing</option>
+                                                                        <option value="Sales and Marketing">Sales and
+                                                                            Marketing</option>
                                                                     </select>
                                                                 </div>
                                                                 <div class="form-group">
@@ -227,14 +228,14 @@
                                                                     <input type="text" class="form-control"
                                                                         id="position" required>
                                                                 </div>
-                                                                <div class="form-check mb-2 right-option">
+                                                                <!-- <div class="form-check mb-2 right-option">
                                                                     <input class="form-check-input" type="radio"
                                                                         name="optionsRadios" id="optionsRadios2"
                                                                         value="No" checked="">
                                                                     <label class="form-check-label"
                                                                         for="optionsRadios2">No Photo</label>
-                                                                </div>
-                                                                <div class="button-container">
+                                                                </div> -->
+                                                                <div class="button-container2">
                                                                     <div class="row">
                                                                         <div class="col-md-6 mb-2">
                                                                             <button type="submit" id="delete-btn"
@@ -245,8 +246,8 @@
                                                                                 class="btn btn-block reset-btn">Reset</button>
                                                                         </div>
                                                                     </div>
-                                                                    <button type="submit" id="update-photo-btn"
-                                                                        class="btn btn-block update-photo-btn">Show
+                                                                    <button type="submit" id="show-photo-btn"
+                                                                        class="btn btn-block show-photo-btn">Show
                                                                         Photos</button>
                                                                 </div>
                                                             </div>
@@ -375,7 +376,7 @@
                                                                         required>
                                                                 </div>
                                                                 <div class="button-container"
-                                                                    style="margin-top: 102px;">
+                                                                    style="margin-top: 107px;">
                                                                     <div class="row">
                                                                         <div class="col-md-6">
                                                                             <button type="submit" id="att-update-btn"
@@ -508,6 +509,39 @@
                             </main>
                         </div>
                     </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal d-none" id="myModal">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalTitle"></h5>
+                    <button type="button" id="btn-close" class="btn-close" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" id="ok-btn" class="btn btn-secondary ok-btn"
+                        data-bs-dismiss="modal">Ok</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal d-none" id="confirmModal">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="confirmModalTitle"></h5>
+                    <button type="button" id="btn-close" class="btn-close" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" id="ok-btn" class="btn btn-secondary no-btn"
+                        data-bs-dismiss="modal">No</button>
+                    <button type="button" class="btn btn-primary yes-btn" id="confirmYesBtn">Yes</button>
                 </div>
             </div>
         </div>

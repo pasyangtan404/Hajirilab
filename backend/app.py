@@ -7,11 +7,8 @@ import os
 import cv2
 import time
 from datetime import datetime
-import numpy as np
 import csv
-from skimage.feature import hog, local_binary_pattern
-from sklearn.svm import SVC
-import joblib
+from helpers import extract_faces, get_eyes, preprocess_face, draw_frame, data_augmentation,train_model, recognize_face
 
 app = Flask(__name__)
 CORS(app)
@@ -21,8 +18,7 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://root:''@localhost/hajirilabdb'
 db = SQLAlchemy(app)
 ma = Marshmallow(app)
 
-
- # Set the parameters for HOG and LBP feature extraction
+# Set the parameters for HOG and LBP feature extraction
 blockSize = (8, 8)
 cellSize = (2, 2)
 nbins = 9
@@ -39,140 +35,6 @@ current_dir = os.path.dirname(os.path.abspath(__file__))
 data_folder = os.path.join(current_dir, '../face_data')
 if not os.path.exists(data_folder):
     os.makedirs(data_folder)
-
-def extract_faces(img):
-    face_detector = cv2.CascadeClassifier('D:/finalyearproject/hajirilab/detectors/haarcascade_frontalface_default.xml')
-    gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-    faces = face_detector.detectMultiScale(gray, scaleFactor=1.1, minNeighbors=5, minSize=(30, 30))
-    return faces
-
-def get_eyes(img):
-    eye_detector = cv2.CascadeClassifier('D:/finalyearproject/hajirilab/detectors/haarcascade_eye.xml')
-    gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-    eyes = eye_detector.detectMultiScale(gray, scaleFactor=1.1, minNeighbors=6, minSize=(30, 30))
-    return eyes
-
-def preprocess_face(img):
-    # Convert the face image to grayscale
-    face_img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-    
-     # Resize the face image to a fixed size                
-    face_img = cv2.resize(face_img, (120, 120))
-                    
-    # Normalizing the pixel values of the face image to be between 0 and 1
-    face_img = face_img.astype(float) / 255.0
-        
-    # Defining the gamma value
-    gamma = 1.5
-
-    # Applying gamma correction
-    corrected = cv2.pow(face_img/255.0, gamma)
-
-    # Normalizing the output image
-    face_img = cv2.normalize(corrected, None, 0, 255, cv2.NORM_MINMAX, dtype=cv2.CV_8U)
-    
-    return face_img
-    
-def draw_frame(frame, x, y, w, h, color, text):
-    # Draw the bounding box and display information about the recognized face
-    cv2.rectangle(frame, (x, y), (x+w, y+h), color, 2)
-    cv2.putText(frame, text, (30, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, color, 2, cv2.LINE_AA)
-
-def extract_hog_features(img, nbins, blockSize, cellSize):
-    # Perform HOG feature extraction
-    hog_feature = hog(img, orientations= nbins, pixels_per_cell=blockSize,
-                      cells_per_block=cellSize, visualize=False)
-    return hog_feature
-
-def extract_lbp_features(img, radius, neighbors):
-    # Perform LBP feature extraction on the image
-    lbp_feature = local_binary_pattern(img, neighbors, radius, method='uniform').flatten()
-
-    return lbp_feature
-
-def train_model():  
-    # Specify the input directory path relative to the current directory
-    input_dir = os.path.join(current_dir, '../face_data')
-    
-    # Initialize lists to store features and labels
-    features = []
-    labels = []
-    
-    for name in os.listdir(input_dir):
-        for filename in os.listdir(os.path.join(input_dir, name)):
-            if filename.endswith('.jpg'):
-                # Load the pre-processed face image and extract the label from the filename
-                img = cv2.imread(os.path.join(input_dir, name, filename))
-                if img is None:
-                    print(f"Error loading image: {os.path.join(input_dir, name, filename)}")
-                    continue
-                # Convert the image to grayscale
-                img_gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-                face_img = cv2.resize(img_gray, (120, 120))
-                
-                # Extract HOG and LBP features
-                hog_feature = extract_hog_features(face_img, nbins, blockSize, cellSize)
-                lbp_feature = extract_lbp_features(face_img, radius, neighbors)
-                
-                # print(hog_feature.shape)
-                # print(lbp_feature.shape)
-                # print()
-
-                # Concatenate HOG and LBP features
-                combined_feature = np.concatenate((hog_feature, lbp_feature))
-
-                # Extract the label from the image name
-                label = filename.split('_')[0]
-
-                # Append the features and label to the lists
-                features.append(combined_feature)
-                labels.append(label)
-                
-                cv2.namedWindow('Training...', cv2.WINDOW_NORMAL)
-                cv2.resizeWindow('Training...', 800, 600)
-
-                
-                # Show the training image
-                cv2.imshow('Training...', img)
-                cv2.waitKey(50)  # Update the displayed image
-                
-    
-    
-    # Convert the lists to NumPy arrays
-    features = np.array(features)
-    labels = np.array(labels)
-
-    # Train the SVM model
-    model = SVC()
-    model.fit(features, labels)
-    
-    # Close the training window
-    cv2.destroyWindow('Training...')
-    
-    # Evaluate the model
-    accuracy = model.score(features, labels)
-
-    print('Accuracy: {}'.format(accuracy))
-    
-    # Specify the path for the model file
-    model_file_path = os.path.join(current_dir, '..', 'face_recognition_model.pkl')
-    joblib.dump(model, model_file_path)
-    
-def recognize_face(img):
-    # Load the trained face recognition model
-    model_file_path = os.path.join(current_dir, '..', 'face_recognition_model.pkl')
-    model = joblib.load(model_file_path)
-
-    # Extract features from the face image
-    hog_feature = extract_hog_features(img, nbins, blockSize, cellSize)
-    lbp_feature = extract_lbp_features(img, radius, neighbors)
-    combined_feature = np.concatenate((hog_feature, lbp_feature))
-
-    # Predict the label (employee_id) of the face using the trained model
-    predicted_label = model.predict([combined_feature])[0]
-    confidence = model.decision_function([combined_feature])[0]
-
-    return predicted_label, confidence
 
 class Users(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -226,9 +88,9 @@ class Emp_details(db.Model):
     address = db.Column(db.String(100), nullable=False)
     department = db.Column(db.String(50), nullable=False)
     position = db.Column(db.String(50), nullable=False)
-    photo_sample = db.Column(db.String(10), nullable=False)
+    photo_sample = db.Column(db.String(10), default="No")
 
-    def __init__(self, employee_id, first_name, last_name, gender, dob, email, phone_num, address, department, position, photo_sample):
+    def __init__(self, employee_id, first_name, last_name, gender, dob, email, phone_num, address, department, position,  photo_sample):
         self.employee_id = employee_id
         self.first_name = first_name
         self.last_name = last_name
@@ -239,7 +101,7 @@ class Emp_details(db.Model):
         self.address = address
         self.department = department
         self.position = position
-        self.photo_sample = photo_sample
+        self.photo_sample =  photo_sample
 
 class EmployeeSchema(Schema):
     employee_id = fields.Int()
@@ -304,10 +166,9 @@ class UpdateEmployeeSchema(Schema):
     address = fields.String()
     department = fields.String()
     position = fields.String()
-    photo_sample = fields.String()
+    photo_sample = fields.Str()
     
 update_employee_schema = UpdateEmployeeSchema()
-
 
 @app.route('/update/<employee_id>', methods=['PUT'])
 def update_emp_details(employee_id):
@@ -367,6 +228,12 @@ def capture():
         
         emp = Emp_details.query.filter_by(employee_id=employee_id).first()
         if emp:
+            # Update the photo_sample column to 'yes'
+            emp.photo_sample = 'Yes'
+            
+            # Commit the changes to the database
+            db.session.commit()
+            
             # Create folder if it doesn't exist
             folder_name = os.path.join(data_folder, f'{employee_id}_{first_name}_{last_name}')
             if not os.path.exists(folder_name):
@@ -395,7 +262,10 @@ def capture():
                         face_img = frame[y:y+h, x:x+w]
                         # Preprocess the face image
                         face_img = preprocess_face(face_img)
-                    
+                        
+                        # Perform data augmentation on the face image
+                        face_img2 = data_augmentation(face_img)
+                        
                         # Draw bounding box and text on the frame
                         color = (255, 0, 20)
                         info_text = f'Images Captured: {i}/50'
@@ -413,6 +283,10 @@ def capture():
                             # Save the image
                             image_path = os.path.join(folder_name, f'{employee_id}_{first_name}_{last_name}_{str(i+1)}.jpg')
                             cv2.imwrite(image_path, face_img)
+                            
+                            # Save the grayscale augmented image
+                            image_gray_path = os.path.join(folder_name, f'{employee_id}_{first_name}_{last_name}_{str(i+1)}a.jpg')
+                            cv2.imwrite(image_gray_path, face_img2)
                             i += 1
                         j+=1
                     if j==500:
@@ -425,7 +299,7 @@ def capture():
             # Release the camera
             cap.release()
             cv2.destroyAllWindows()
-        
+                        
             return jsonify({'message': 'Photos captured successfully'})
         
         else:
@@ -457,11 +331,14 @@ def train_data():
         # Return an error response if an exception occurs during training
         return jsonify({'success': False, 'error': str(e)}), 500
     
-@app.route('/take_attendance', methods=['POST'])
+@app.route('/attendance', methods=['POST'])
 def take_attendance():
     try:
         # Set up the video capture
         cap = cv2.VideoCapture(0)
+        
+        # Create a flag to track if attendance has been recorded
+        attendance_recorded = False
 
         while True:
             # Capture frame-by-frame
@@ -485,6 +362,15 @@ def take_attendance():
                     color = (0, 255, 0)  # Green frame
                     if employee:
                         info_text = f"ID: {employee.employee_id}  Name: {employee.first_name} {employee.last_name}"
+                        if not attendance_recorded:
+                            # Create attendance record in the CSV file
+                            attendance_data = [employee.employee_id, employee.first_name, employee.last_name,
+                                               employee.department, datetime.now().strftime('%H:%M:%S'),
+                                               datetime.now().strftime('%Y-%m-%d'), attendance_status]
+                            with open('attendance.csv', 'a', newline='') as file:
+                                writer = csv.writer(file)
+                                writer.writerow(attendance_data)
+                            attendance_recorded = True
                     else:
                         info_text = "Unknown"
                 else:
@@ -496,15 +382,6 @@ def take_attendance():
 
                 # Draw the frame and display information
                 draw_frame(frame, x, y, w, h, color, info_text)
-
-                # Create attendance record in the CSV file
-                if employee:
-                    attendance_data = [employee.employee_id, employee.first_name, employee.last_name,
-                                       employee.department, datetime.now().strftime('%H:%M:%S'),
-                                       datetime.now().strftime('%Y-%m-%d'), attendance_status]
-                    with open('attendance.csv', 'a', newline='') as file:
-                        writer = csv.writer(file)
-                        writer.writerow(attendance_data)
 
             # Display the frame
             cv2.imshow('HajiriLab(Taking Attendance...)', frame)
@@ -521,6 +398,28 @@ def take_attendance():
 
     except Exception as e:
         return jsonify({'error': str(e)}), 500
+
+@app.route('/show', methods=['POST'])
+def show_photos():
+    print("show photo button clicked!")
+    data = request.get_json()
+    employee_id = data.get('employee_id')
+    first_name = data.get('first_name')
+    last_name = data.get('last_name')
+        
+    # Construct the folder name based on the ID, first name, and last name
+    folder_name = f"{employee_id}_{first_name}_{last_name}"
+
+    # Specify the directory path where the folders are located
+    folder_path = os.path.join('path_to_folder_directory', folder_name)
+
+    # Check if the folder exists
+    if os.path.exists(folder_path):
+        # Open the folder using the default file explorer of the operating system
+        os.startfile(folder_path)
+        return jsonify({'message': 'Folder opened successfully'})
+    else:
+        return jsonify({'error': 'Folder does not exist'}), 404
 
 if __name__ == "__main__":
     app.run(debug=True)
