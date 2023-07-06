@@ -22,6 +22,8 @@ neighbors = 8
 # Get the directory of the app.py file
 current_dir = os.path.dirname(os.path.abspath(__file__))
 
+model_file_path = os.path.join(current_dir, '..', 'face_recognition_model.pkl')
+
 def extract_faces(img):
     face_detector = cv2.CascadeClassifier('D:/finalyearproject/hajirilab/detectors/haarcascade_frontalface_default.xml')
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
@@ -97,23 +99,7 @@ def extract_lbp_features(img, radius, neighbors):
 
     return lbp_feature
 
-def train_model():  
-    # Define the pipeline with feature normalization and dimensionality reduction
-    pipeline = Pipeline([
-        ('scaler', StandardScaler()),
-        ('pca', PCA(n_components=0.95)),  # Retain 95% of the variance
-        ('svm', SVC())
-    ])
-        
-    # Define the parameter grid for hyperparameter tuning
-    param_grid = {
-        'svm__C': [1, 10, 100],
-        'svm__kernel': ['linear', 'rbf']
-    }
-        
-    # Perform grid search cross-validation to find the best hyperparameters
-    grid_search = GridSearchCV(pipeline, param_grid, cv=5)
-    
+def extract_features_labels():
     # Specify the input directory path relative to the current directory
     input_dir = os.path.join(current_dir, '../face_data')
     
@@ -129,47 +115,58 @@ def train_model():
                 if img is None:
                     print(f"Error loading image: {os.path.join(input_dir, name, filename)}")
                     continue
-                    
-                # Convert the image to grayscale
-                img_gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-                face_img = cv2.resize(img_gray, (256, 256))
-                
-                # Extract HOG and LBP features
+                # Preprocess the image and extract features
+                face_img = preprocess_face(img)
                 hog_feature = extract_hog_features(face_img, nbins, blockSize, cellSize)
                 lbp_feature = extract_lbp_features(face_img, radius, neighbors)
-                
-                print(hog_feature.shape)
-                print(lbp_feature.shape)
-                print()
-                
-                
-                # Concatenate HOG and LBP features
                 combined_feature = np.concatenate((hog_feature, lbp_feature))
-
+                
                 # Extract the label from the image name
                 label = filename.split('_')[0]
 
                 # Append the features and label to the lists
                 features.append(combined_feature)
                 labels.append(label)
-                
+
                 cv2.namedWindow('Training...', cv2.WINDOW_NORMAL)
                 cv2.resizeWindow('Training...', 800, 600)
 
                 # Show the training image
                 cv2.imshow('Training...', img)
-                cv2.waitKey(50)  # Update the displayed image                
-    
+                cv2.waitKey(50)  # Update the displayed image
+
     # Convert the lists to NumPy arrays
     features = np.array(features)
     labels = np.array(labels)
+
+    print("Training...")
+    cv2.destroyAllWindows()
+
+    return features, labels
+
+def train():
+    # Define the pipeline with feature normalization and dimensionality reduction
+    pipeline = Pipeline([
+        ('scaler', StandardScaler()),
+        ('pca', PCA(n_components=0.95)),  # Retain 95% of the variance
+        ('svm', SVC())
+    ])
+        
+    # Define the parameter grid for hyperparameter tuning
+    param_grid = {
+        'svm__C': [1, 10, 100],
+        'svm__kernel': ['linear', 'rbf'],
+        'svm__gamma': ['scale', 'auto']
+    }
     
+    # Perform grid search cross-validation to find the best hyperparameters
+    grid_search = GridSearchCV(pipeline, param_grid, cv=5)
+        
+    features, labels = extract_features_labels()
+        
     # Split the data into training and validation sets
     train_features, val_features, train_labels, val_labels = train_test_split(
     features, labels, test_size=0.2, random_state=42)
-    
-    print("Training...")
-    cv2.destroyAllWindows()
 
     # Fit the model using grid search cross-validation
     grid_search.fit(train_features, train_labels) 
@@ -180,7 +177,7 @@ def train_model():
     # Get the best model
     model = grid_search.best_estimator_
     
-    # Train the best model on the full training dataset
+    # Train the best model on the full training dataset using partial_fit
     model.fit(train_features, train_labels)
     
     train_predictions = model.predict(train_features)
@@ -190,10 +187,24 @@ def train_model():
     val_predictions = model.predict(val_features)
     val_accuracy = accuracy_score(val_labels, val_predictions)
     print('Validation Accuracy:', val_accuracy)
-    
-    # Specify the path for the model file
-    model_file_path = os.path.join(current_dir, '..', 'face_recognition_model.pkl')
+
     joblib.dump(model, model_file_path)
+    
+def add_train():
+    model = joblib.load(model_file_path)
+    new_features, new_labels = extract_features_labels()
+    
+    # Update the existing model with new data using partial_fit
+    model.fit(new_features, new_labels)
+
+    # Save the updated model
+    joblib.dump(model, model_file_path)
+    
+def train_model():
+    if os.path.exists(model_file_path):
+        add_train()
+    else:
+        train()
     
 def recognize_face(img):
     # Load the trained face recognition model

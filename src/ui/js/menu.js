@@ -131,7 +131,7 @@ function hideModal() {
 function showConfirmationModal(title, text, callback) {
     confirmModalTitle.textContent = title;
     confirmModal.classList.remove('d-none');
-    
+
     confirmYesBtn.addEventListener('click', () => {
         hideConfirmationModal();
         callback();
@@ -416,15 +416,6 @@ function takeAttendance() {
         });
 }
 
-document.addEventListener('DOMContentLoaded', () => {
-    const takeAttendanceBtn = document.getElementById('attendance-btn');
-
-    takeAttendanceBtn.addEventListener('click', event => {
-        event.preventDefault();
-        takeAttendance();
-    });
-});
-
 function showPhotos() {
     const employee_id = document.querySelector('#employee-id').value;
     const first_name = document.querySelector('#first-name').value;
@@ -452,7 +443,25 @@ function showPhotos() {
         })
         .then(data => {
             console.log(data);
-            alert('Folder opened successfully');
+        })
+        .catch(error => {
+            console.error(error);
+            alert('An error occurred while opening the folder');
+        });
+}
+
+function openPhotos() {
+    fetch('http://127.0.0.1:5000/open', {
+        method: 'POST'
+    })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP ${response.status} ${response.statusText}`);
+            }
+            return response.json();
+        })
+        .then(data => {
+            console.log(data);
         })
         .catch(error => {
             console.error(error);
@@ -461,10 +470,22 @@ function showPhotos() {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
+    const takeAttendanceBtn = document.getElementById('attendance-btn');
     const showPhotoBtn = document.getElementById('show-photo-btn');
+    const openPhotoBtn = document.getElementById('open-photo-btn');
+
+    takeAttendanceBtn.addEventListener('click', event => {
+        event.preventDefault();
+        takeAttendance();
+    });
 
     showPhotoBtn.addEventListener('click', event => {
         event.preventDefault();
         showPhotos();
+    });
+
+    openPhotoBtn.addEventListener('click', event => {
+        event.preventDefault();
+        openPhotos();
     });
 });

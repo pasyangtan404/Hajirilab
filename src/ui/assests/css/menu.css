@@ -341,7 +341,8 @@ body {
 .add-photo-btn,
 .show-photo-btn,
 .attendance-btn,
-.train-btn {
+.train-btn,
+.open-photo-btn {
     border-radius: 10px;
     width: 200px;
     background-color: #6495ED;

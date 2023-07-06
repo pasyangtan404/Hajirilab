@@ -337,8 +337,8 @@ def take_attendance():
         # Set up the video capture
         cap = cv2.VideoCapture(0)
         
-        # Create a flag to track if attendance has been recorded
-        attendance_recorded = False
+        # Create a dictionary to store employee information
+        employee_info = {}
 
         while True:
             # Capture frame-by-frame
@@ -362,15 +362,51 @@ def take_attendance():
                     color = (0, 255, 0)  # Green frame
                     if employee:
                         info_text = f"ID: {employee.employee_id}  Name: {employee.first_name} {employee.last_name}"
-                        if not attendance_recorded:
-                            # Create attendance record in the CSV file
-                            attendance_data = [employee.employee_id, employee.first_name, employee.last_name,
-                                               employee.department, datetime.now().strftime('%H:%M:%S'),
-                                               datetime.now().strftime('%Y-%m-%d'), attendance_status]
-                            with open('attendance.csv', 'a', newline='') as file:
-                                writer = csv.writer(file)
-                                writer.writerow(attendance_data)
-                            attendance_recorded = True
+                        
+                        now = datetime.datetime.now()
+
+                        # Check if employee info exists in the dictionary
+                        if employee.employee_id in employee_info:
+                            employee_info[employee.employee_id]['exit_time'] = now.strftime('%H:%M:%S')
+                            employee_info[employee.employee_id]['direction'] = 'Exit'
+                        else:
+                            employee_info[employee.employee_id] = {
+                                'entry_time': now.strftime('%H:%M:%S'),
+                                'exit_time': '',
+                                'direction': 'Entry'
+                            }
+
+                        # Create attendance record in the CSV file
+                        attendance_data = [employee.employee_id, employee.first_name, employee.last_name,
+                                            employee.department, datetime.now().strftime('%H:%M:%S'),
+                                            datetime.now().strftime('%Y-%m-%d'), employee_info[employee.employee_id]['direction'], 
+                                            attendance_status]
+                        
+                        full_date = datetime.date.today()
+                        csv_name = f"attendance_{full_date}.csv"
+                        
+                        # Read the existing CSV data
+                        existing_data = []
+                        if os.path.exists(csv_name):
+                            with open(csv_name, 'r') as file:
+                                reader = csv.reader(file)
+                                existing_data = list(reader)
+
+                        # Update the CSV data with the new attendance record
+                        for i, row in enumerate(existing_data):
+                            if row[0] == employee.employee_id:
+                                if employee_info[employee.employee_id]['exit_time']:
+                                    # Overwrite the exit time and direction
+                                    existing_data[i][4] = now.strftime('%H:%M:%S')
+                                    existing_data[i][6] = employee_info[employee.employee_id]['direction']
+                                break
+                        else:
+                            # Append the new attendance record
+                            existing_data.append(attendance_data)
+                        
+                        with open(csv_name, 'a', newline='') as file:
+                            writer = csv.writer(file)
+                            writer.writerow(attendance_data)
                     else:
                         info_text = "Unknown"
                 else:
@@ -409,9 +445,10 @@ def show_photos():
         
     # Construct the folder name based on the ID, first name, and last name
     folder_name = f"{employee_id}_{first_name}_{last_name}"
+    
+    data_folder = os.path.join(current_dir, '../face_data')
 
-    # Specify the directory path where the folders are located
-    folder_path = os.path.join('path_to_folder_directory', folder_name)
+    folder_path = os.path.join(data_folder, folder_name)
 
     # Check if the folder exists
     if os.path.exists(folder_path):
@@ -420,6 +457,21 @@ def show_photos():
         return jsonify({'message': 'Folder opened successfully'})
     else:
         return jsonify({'error': 'Folder does not exist'}), 404
+
+@app.route('/open', methods=['POST'])
+def open_photos():
+    print("open button clicked!")
+    
+    data_path = os.path.join(current_dir, '../face_data')
+
+    # Check if the folder exists
+    if os.path.exists(data_path):
+        # Open the folder using the default file explorer of the operating system
+        os.startfile(data_path)
+        return jsonify({'message': 'Folder opened successfully'})
+    else:
+        return jsonify({'error': 'Folder does not exist'}), 404
+
 
 if __name__ == "__main__":
     app.run(debug=True)
