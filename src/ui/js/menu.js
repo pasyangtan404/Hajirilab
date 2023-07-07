@@ -59,13 +59,6 @@ options.forEach(function (option) {
 /*----------- for save, update and delete button ---------------*/
 
 const form = document.querySelector('form');
-const modal = document.getElementById('myModal');
-const modalTitle = document.getElementById('modalTitle');
-const confirmModal = document.getElementById('confirmModal');
-const confirmModalTitle = document.getElementById('confirmModalTitle');
-const closeBtns = document.getElementById('btn-close');
-const okBtn = document.getElementById('ok-btn');
-const confirmYesBtn = document.getElementById('confirmYesBtn');
 
 form.addEventListener('submit', event => {
     event.preventDefault();
@@ -101,46 +94,13 @@ form.addEventListener('submit', event => {
     if (event.submitter.id === 'save-btn') {
         saveEmployeeDetails(data);
     } else if (event.submitter.id === 'update-btn') {
-        showConfirmationModal('Update Confirmation', 'Are you sure you want to update the employee details?', () => {
-            updateEmployeeDetails(data);
-        });
+        updateEmployeeDetails(data);
     } else if (event.submitter.id === 'delete-btn') {
-        showConfirmationModal('Delete Confirmation', 'Are you sure you want to delete the employee details?', () => {
-            deleteEmployeeDetails(data);
-        });
+        deleteEmployeeDetails(data);
     }
 });
 
-okBtn.addEventListener('click', () => {
-    hideModal()
-});
 
-closeBtns.addEventListener('click', () => {
-    hideModal()
-});
-
-function showModal(title, text) {
-    modalTitle.textContent = title;
-    modal.classList.remove('d-none');
-}
-
-function hideModal() {
-    modal.classList.add('d-none');
-}
-
-function showConfirmationModal(title, text, callback) {
-    confirmModalTitle.textContent = title;
-    confirmModal.classList.remove('d-none');
-
-    confirmYesBtn.addEventListener('click', () => {
-        hideConfirmationModal();
-        callback();
-    });
-}
-
-function hideConfirmationModal() {
-    confirmModal.classList.add('d-none');
-}
 
 function saveEmployeeDetails(data) {
     fetch('http://127.0.0.1:5000/save', {
@@ -157,15 +117,15 @@ function saveEmployeeDetails(data) {
         .then(data => {
             console.log(data);
             if (data.message === 'Employee details saved successfully') {
-                showModal('Employee details saved successfully');
+                alert('Employee details saved successfully');
                 window.location.reload();
             } else if (data.message === 'Employee details already exist') {
-                showModal('Employee details already exist');
+                alert('Employee details already exist');
             }
         })
         .catch(error => {
             console.error(error);
-            showModal('An error occurred while saving employee details');
+            alert('An error occurred while saving employee details');
         });
 }
 
@@ -186,13 +146,13 @@ function updateEmployeeDetails(data) {
         .then(data => {
             console.log(data);
             if (data.updated === true) {
-                showModal('Employee details updated successfully');
+                alert('Employee details updated successfully');
                 window.location.reload();
             } else if (data.updated === false) {
-                showModal('No changes made');
+                alert('No changes made');
                 window.location.reload();
             } else {
-                showModal('An error occurred while updating employee details');
+                alert('An error occurred while updating employee details');
             }
         })
         .catch(error => {
@@ -214,12 +174,12 @@ function deleteEmployeeDetails(data) {
         })
         .then(data => {
             console.log(data);
-            showModal('Employee details deleted successfully');
+            alert('Employee details deleted successfully');
             window.location.reload();
         })
         .catch(error => {
             console.error(error);
-            showModal('An error occurred while deleting employee details');
+            alert('An error occurred while deleting employee details');
         });
 }
 
@@ -228,7 +188,7 @@ document.getElementById('reset-btn').addEventListener('click', () => {
     form.reset();
 });
 
-
+/*----------- for add button to capture photos ---------------*/
 function capturePhotos() {
     const employee_id = document.querySelector('#employee-id').value;
     const first_name = document.querySelector('#first-name').value;
@@ -257,6 +217,7 @@ function capturePhotos() {
         .then(data => {
             console.log(data);
             alert('Photos captured and preprocessed successfully');
+            window.location.reload();
         })
         .catch(error => {
             console.error(error);
@@ -273,6 +234,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 
+/*----------- for showing details of employee ---------------*/
 function populateTable() {
     fetch('http://127.0.0.1:5000/employees')
         .then(response => {
@@ -284,6 +246,9 @@ function populateTable() {
         .then(data => {
             const tableBody = document.querySelector('#employee-table tbody');
             tableBody.innerHTML = '';
+            const columnName = ['employee_id', 'first_name', 'last_name', 
+                                'gender', 'dob', 'email', 'phone_num', 'address', 
+                                'department', 'position', 'photo_sample'];
 
             data.forEach(employee => {
                 const row = document.createElement('tr');
@@ -291,49 +256,11 @@ function populateTable() {
                     fillForm(employee);
                 });
 
-                const employeeIdCell = document.createElement('td');
-                employeeIdCell.textContent = employee.employee_id;
-                row.appendChild(employeeIdCell);
-
-                const firstNameCell = document.createElement('td');
-                firstNameCell.textContent = employee.first_name;
-                row.appendChild(firstNameCell);
-
-                const lastNameCell = document.createElement('td');
-                lastNameCell.textContent = employee.last_name;
-                row.appendChild(lastNameCell);
-
-                const genderCell = document.createElement('td');
-                genderCell.textContent = employee.gender;
-                row.appendChild(genderCell);
-
-                const dobCell = document.createElement('td');
-                dobCell.textContent = employee.dob;
-                row.appendChild(dobCell);
-
-                const emailCell = document.createElement('td');
-                emailCell.textContent = employee.email;
-                row.appendChild(emailCell);
-
-                const phoneNumCell = document.createElement('td');
-                phoneNumCell.textContent = employee.phone_num
-                row.appendChild(phoneNumCell);
-
-                const addressCell = document.createElement('td');
-                addressCell.textContent = employee.address;
-                row.appendChild(addressCell);
-
-                const departmentCell = document.createElement('td');
-                departmentCell.textContent = employee.department;
-                row.appendChild(departmentCell);
-
-                const positionCell = document.createElement('td');
-                positionCell.textContent = employee.position;
-                row.appendChild(positionCell);
-
-                const photoSampleCell = document.createElement('td');
-                photoSampleCell.textContent = employee.photo_sample;
-                row.appendChild(photoSampleCell);
+                columnName.forEach(prop => {
+                    const cell = document.createElement('td');
+                    cell.textContent = employee[prop];
+                    row.appendChild(cell);
+                  });
 
                 tableBody.appendChild(row);
             });
@@ -341,6 +268,7 @@ function populateTable() {
         .catch(error => {
             console.error(error);
             alert('An error occurred while fetching employee details');
+            window.location.reload();
         });
 }
 
@@ -361,12 +289,7 @@ function fillForm(employee) {
 // Call the populateTable function to load employee details on page load
 window.addEventListener('load', populateTable);
 
-document.getElementById('att-reset-btn').addEventListener('click', () => {
-    const form = document.querySelector('att-form');
-    form.reset();
-});
-
-
+/*----------- for train and attendance button ---------------*/
 // Get the train button element
 const trainButton = document.getElementById('train-btn');
 
@@ -382,8 +305,10 @@ trainButton.addEventListener('click', () => {
             console.log(data);
             if (data.success) {
                 alert('Model trained successfully!');
+                window.location.reload();
             } else {
                 alert('An error occurred during training.');
+                window.location.reload();
             }
         })
         .catch(error => {
@@ -392,8 +317,8 @@ trainButton.addEventListener('click', () => {
         });
 });
 
-function takeAttendance() {
-    fetch('http://127.0.0.1:5000/attendance', {
+function check_In() {
+    fetch('http://127.0.0.1:5000/checkIn', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -409,13 +334,49 @@ function takeAttendance() {
         .then(data => {
             console.log(data);
             alert('Attendance taken successfully');
+            window.location.reload();
         })
         .catch(error => {
             console.error(error);
-            alert('An error occurred while taking attendance');
         });
 }
 
+document.getElementById('check-out-btn').addEventListener('click', () => {
+    check_Out();
+});
+
+function check_Out() {
+    fetch('http://127.0.0.1:5000/checkOut', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({})
+    })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP ${response.status} ${response.statusText}`);
+            }
+            return response.json();
+        })
+        .then(data => {
+            console.log(data);
+            if (data.message === 'CSV file not found') {
+                alert('CSV file not found');
+            } else if (data.message === 'Check-out successful') {
+                alert('Check-out successful');
+            }
+        })
+        .catch(error => {
+            console.error(error);
+        });
+}
+
+document.getElementById('attendance-btn').addEventListener('click', () => {
+    check_In();
+});
+
+/*----------- for show photo and open button ---------------*/
 function showPhotos() {
     const employee_id = document.querySelector('#employee-id').value;
     const first_name = document.querySelector('#first-name').value;
@@ -470,14 +431,8 @@ function openPhotos() {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-    const takeAttendanceBtn = document.getElementById('attendance-btn');
     const showPhotoBtn = document.getElementById('show-photo-btn');
     const openPhotoBtn = document.getElementById('open-photo-btn');
-
-    takeAttendanceBtn.addEventListener('click', event => {
-        event.preventDefault();
-        takeAttendance();
-    });
 
     showPhotoBtn.addEventListener('click', event => {
         event.preventDefault();
@@ -488,4 +443,109 @@ document.addEventListener('DOMContentLoaded', () => {
         event.preventDefault();
         openPhotos();
     });
+});
+
+function importCSV() {
+    var fileInput = document.createElement('input');
+    fileInput.type = 'file';
+
+    fileInput.onchange = function (event) {
+        var file = event.target.files[0];
+
+        if (file) {
+            var reader = new FileReader();
+
+            reader.onload = function (e) {
+                var contents = e.target.result;
+                processCSVData(contents);
+            };
+
+            reader.readAsText(file);
+        }
+    };
+
+    fileInput.accept = '.csv';
+    fileInput.click();
+}
+
+function processCSVData(contents) {
+    var rows = contents.split('\n');
+    var headers = rows[0].split(',').map(header => header.trim());
+    var data = [];
+
+    for (var i = 1; i < rows.length; i++) {
+        var row = rows[i].split(',');
+        var rowData = {};
+
+        for (var j = 0; j < headers.length; j++) {
+            rowData[headers[j]] = row[j];
+        }
+
+        data.push(rowData);
+    }
+
+    updateTable(data);
+}
+
+function updateTable(data) {
+    // Get the table body element
+    var tableBody = document.querySelector('#attendance-table tbody');
+
+    // Clear existing table rows
+    tableBody.innerHTML = '';
+
+    data.forEach(row => {
+        var tableRow = document.createElement('tr');
+        tableRow.addEventListener('click', () => {
+            updateFormFields(row);
+        });
+
+        Object.values(row).forEach(value => {
+            var cell = document.createElement('td');
+            cell.textContent = value;
+            tableRow.appendChild(cell);
+        });
+
+        tableBody.appendChild(tableRow);
+    });
+}
+
+function updateFormFields(row) {
+    // Update the form fields with the imported data
+    document.querySelector('#att-employee-id').value = row['Employee ID'];
+    document.querySelector('#att-first-name').value = row['First Name'];
+    document.querySelector('#att-last-name').value = row['Last Name'];
+    document.querySelector('#att-department').value = row['Department'];
+    document.querySelector('#check-in').value = convertTimeFormat(row['Check-In']);
+    document.querySelector('#check-out').value = convertTimeFormat(row['Check-Out']);
+    document.querySelector('#attdate').value = row['Date'];
+    document.querySelector('#att-status').value = row['Attendance Status'];
+}
+
+function convertTimeFormat(time) {
+    // Split the time into hours, minutes, and seconds
+    var [hours, minutes, seconds] = time.split(':');
+    var period = 'AM';
+
+    // Convert hours to 12-hour format and determine the period (AM/PM)
+    if (hours >= 12) {
+        period = 'PM';
+        hours = hours % 12;
+    }
+
+    if (hours === '0') {
+        hours = '12';
+    }
+
+    var formattedTime = hours + ':' + minutes + ' ' + period;
+    return formattedTime;
+}
+
+document.getElementById('import-btn').addEventListener('click', () => {
+    importCSV();
+});
+
+document.getElementById('att-reset-btn').addEventListener('click', () => {
+    const form = document.querySelector('#att-form');
+    form.reset();
 });

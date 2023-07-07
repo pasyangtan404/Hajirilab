@@ -7,3 +7,7 @@ face_data
 preprocess.ipynb
 face_recognition_model.pkl
 modeltrain.ipynb
+detectors/features.npy
+detectors/labels.npy
+detectors/face_recognition_model.pkl
+attendance/

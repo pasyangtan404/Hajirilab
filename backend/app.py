@@ -3,12 +3,13 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_marshmallow import Marshmallow
 from marshmallow import Schema, fields
 from flask_cors import CORS
+from datetime import datetime
+from helpers import extract_faces, get_eyes, preprocess_face, draw_frame, data_augmentation,train_model, recognize_face
 import os
 import cv2
 import time
-from datetime import datetime
 import csv
-from helpers import extract_faces, get_eyes, preprocess_face, draw_frame, data_augmentation,train_model, recognize_face
+import pandas as pd
 
 app = Flask(__name__)
 CORS(app)
@@ -57,7 +58,7 @@ class UserSchema(ma.Schema):
 
 user_schema = UserSchema()
 
-# handle login requests
+#----------Handle Login----------#
 @app.route('/login', methods=['POST'])
 def login():
     print("Login button clicked!")
@@ -120,6 +121,8 @@ class EmployeeSchema(Schema):
 employee_schema = EmployeeSchema()
 employees_schema = EmployeeSchema(many=True)
 
+
+#--------------------Saving Employee details--------------------#
 @app.route('/save', methods=['POST'])
 def save_emp_details():
     try:
@@ -170,6 +173,7 @@ class UpdateEmployeeSchema(Schema):
     
 update_employee_schema = UpdateEmployeeSchema()
 
+#-----------------Updating Employee Details-------------------#
 @app.route('/update/<employee_id>', methods=['PUT'])
 def update_emp_details(employee_id):
     try:
@@ -199,6 +203,7 @@ def update_emp_details(employee_id):
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
+#-----------------------Deleting Employee Details------------------#
 @app.route('/delete/<employee_id>', methods=['DELETE'])
 def delete_emp_details(employee_id):
     try:
@@ -216,7 +221,7 @@ def delete_emp_details(employee_id):
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
-# Route to handle the photo capture and preprocessing
+#------------------Capturing Images from Camera-----------------#
 @app.route('/capture', methods=['POST'])
 def capture():
     try:
@@ -308,7 +313,8 @@ def capture():
     
     except Exception as e:
         return jsonify({'error': str(e)}), 500
-    
+
+#-------------------------Displaying all Employee Details-------------------#   
 @app.route('/employees', methods=['GET'])
 def get_employee_details():
     try:
@@ -330,22 +336,41 @@ def train_data():
     except Exception as e:
         # Return an error response if an exception occurs during training
         return jsonify({'success': False, 'error': str(e)}), 500
-    
-@app.route('/attendance', methods=['POST'])
-def take_attendance():
+
+#-----------------Recognizing and Taking Attendance---------------# 
+@app.route('/checkIn', methods=['POST'])
+def checkIn_Attendance():
     try:
-        # Set up the video capture
+        # Set up the video capture 
         cap = cv2.VideoCapture(0)
-        
-        # Create a dictionary to store employee information
-        employee_info = {}
 
         while True:
             # Capture frame-by-frame
             ret, frame = cap.read()
 
             faces = extract_faces(frame)
-
+            
+            # Create the attendance folder path
+            attendance_folder = os.path.join(current_dir, '../attendance')
+            
+            # Check if the attendance folder exists and create it if it doesn't
+            if not os.path.exists(attendance_folder):
+                os.makedirs(attendance_folder)
+            
+            current_date = datetime.now().strftime('%Y-%m-%d')
+            csv_name = os.path.join(attendance_folder, f"attendance_{current_date}.csv")
+            
+            # Check if the CSV file exists
+            csv_exists = os.path.exists(csv_name)
+            
+            # Create an empty DataFrame to hold attendance data
+            attendance_data = pd.DataFrame(columns=['Employee ID', 'First Name', 'Last Name', 
+                                                    'Department', 'Date', 'Check-In', 'Check-Out', 'Attendance Status'])
+            
+            # Read the existing CSV file if it exists
+            if csv_exists:
+                attendance_data = pd.read_csv(csv_name)
+                
             for (x, y, w, h) in faces:
                 face_img = frame[y:y+h, x:x+w]
 
@@ -361,53 +386,31 @@ def take_attendance():
                     attendance_status = 'Present'
                     color = (0, 255, 0)  # Green frame
                     if employee:
-                        info_text = f"ID: {employee.employee_id}  Name: {employee.first_name} {employee.last_name}"
+                        info_text = f"ID: {employee.employee_id}\n{employee.first_name} {employee.last_name}"
+                    
+                        # Check if the employee's details are already written in the CSV
+                        already_written = attendance_data['Employee ID'].eq(employee.employee_id).any()
                         
-                        now = datetime.datetime.now()
-
-                        # Check if employee info exists in the dictionary
-                        if employee.employee_id in employee_info:
-                            employee_info[employee.employee_id]['exit_time'] = now.strftime('%H:%M:%S')
-                            employee_info[employee.employee_id]['direction'] = 'Exit'
-                        else:
-                            employee_info[employee.employee_id] = {
-                                'entry_time': now.strftime('%H:%M:%S'),
-                                'exit_time': '',
-                                'direction': 'Entry'
+                        if not already_written:
+                            # Get the current date and time
+                            check_in_time = datetime.now().strftime('%H:%M:%S')
+                            
+                            # Create a new row with attendance details
+                            new_row = {
+                            'Employee ID': employee.employee_id,
+                            'First Name': employee.first_name,
+                            'Last Name': employee.last_name,
+                            'Department': employee.department,
+                            'Date': current_date,
+                            'Check-In': check_in_time,
+                            'Check-Out': '',
+                            'Attendance Status': attendance_status
                             }
-
-                        # Create attendance record in the CSV file
-                        attendance_data = [employee.employee_id, employee.first_name, employee.last_name,
-                                            employee.department, datetime.now().strftime('%H:%M:%S'),
-                                            datetime.now().strftime('%Y-%m-%d'), employee_info[employee.employee_id]['direction'], 
-                                            attendance_status]
-                        
-                        full_date = datetime.date.today()
-                        csv_name = f"attendance_{full_date}.csv"
-                        
-                        # Read the existing CSV data
-                        existing_data = []
-                        if os.path.exists(csv_name):
-                            with open(csv_name, 'r') as file:
-                                reader = csv.reader(file)
-                                existing_data = list(reader)
-
-                        # Update the CSV data with the new attendance record
-                        for i, row in enumerate(existing_data):
-                            if row[0] == employee.employee_id:
-                                if employee_info[employee.employee_id]['exit_time']:
-                                    # Overwrite the exit time and direction
-                                    existing_data[i][4] = now.strftime('%H:%M:%S')
-                                    existing_data[i][6] = employee_info[employee.employee_id]['direction']
-                                break
-                        else:
-                            # Append the new attendance record
-                            existing_data.append(attendance_data)
-                        
-                        with open(csv_name, 'a', newline='') as file:
-                            writer = csv.writer(file)
-                            writer.writerow(attendance_data)
+                            
+                            # Append the new row to the DataFrame
+                            attendance_data = attendance_data.append(new_row, ignore_index=True)
                     else:
+                        color = (0, 0, 255)
                         info_text = "Unknown"
                 else:
                     # Face unrecognized
@@ -418,6 +421,9 @@ def take_attendance():
 
                 # Draw the frame and display information
                 draw_frame(frame, x, y, w, h, color, info_text)
+                
+            # Write the updated DataFrame to the CSV file
+            attendance_data.to_csv(csv_name, index=False)
 
             # Display the frame
             cv2.imshow('HajiriLab(Taking Attendance...)', frame)
@@ -425,7 +431,7 @@ def take_attendance():
             # Break the loop if the Esc key is pressed
             if cv2.waitKey(1) == 27:
                 break
-
+            
         # Release the video capture
         cap.release()
         cv2.destroyAllWindows()
@@ -434,7 +440,89 @@ def take_attendance():
 
     except Exception as e:
         return jsonify({'error': str(e)}), 500
+    
+@app.route('/checkOut', methods=['POST'])
+def checkOut_Attendance():
+    try:
+        # Set up the video capture 
+        cap = cv2.VideoCapture(0)
 
+        while True:
+            # Capture frame-by-frame
+            ret, frame = cap.read()
+
+            faces = extract_faces(frame)
+            
+            # Create the attendance folder path
+            attendance_folder = os.path.join(current_dir, '../attendance')
+            
+            # Check if the attendance folder exists and create it if it doesn't
+            if not os.path.exists(attendance_folder):
+                os.makedirs(attendance_folder)
+            
+            current_date = datetime.now().strftime('%Y-%m-%d')
+            csv_name = os.path.join(attendance_folder, f"attendance_{current_date}.csv")
+            
+            # Check if the CSV file exists
+            csv_exists = os.path.exists(csv_name)
+   
+            for (x, y, w, h) in faces:
+                face_img = frame[y:y+h, x:x+w]
+
+                # Preprocess the face image
+                preprocessed_face = preprocess_face(face_img)
+
+                # Recognize the face and retrieve employee details
+                predicted_label, confidence = recognize_face(preprocessed_face)
+                employee = Emp_details.query.filter_by(employee_id=predicted_label).first()
+
+                if confidence[0] >= 0.77:
+                    color = (0, 255, 0)  # Green frame
+                    if employee:
+                        info_text = f"ID: {employee.employee_id}\nName: {employee.first_name} {employee.last_name}"
+                    
+                        # Read the existing CSV file if it exists
+                        if csv_exists:
+                            attendance_data = pd.read_csv(csv_name)
+                            
+                            # Find the employee in the DataFrame
+                            employee_index = attendance_data[attendance_data['Employee ID'] == employee.employee_id].index
+                            
+                            if not employee_index.empty:
+                                check_out_time = datetime.now().strftime('%H:%M:%S')
+                                # Update the check-out time for the employee
+                                attendance_data.loc[employee_index, 'Check-Out'] = check_out_time
+                                # Write the updated DataFrame to the CSV file
+                                attendance_data.to_csv(csv_name, index=False)
+                    else:
+                        color = (0, 0, 255)
+                        info_text = "Unknown"
+                else:
+                    # Face unrecognized
+                    employee = None
+                    color = (0, 0, 255)  # Red frame
+                    info_text = "Unknown"
+
+                # Draw the frame and display information
+                draw_frame(frame, x, y, w, h, color, info_text)
+            
+            # Display the frame
+            cv2.imshow('HajiriLab(Checking-out...)', frame)
+
+            # Break the loop if the Esc key is pressed
+            if cv2.waitKey(1) == 27:
+                break
+            
+        # Release the video capture
+        cap.release()
+        cv2.destroyAllWindows()
+
+        return jsonify({'message': 'Check-out successful'})
+
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+#-----------------Showing Photo of one employee---------------#
 @app.route('/show', methods=['POST'])
 def show_photos():
     print("show photo button clicked!")
@@ -458,6 +546,7 @@ def show_photos():
     else:
         return jsonify({'error': 'Folder does not exist'}), 404
 
+#--------------Opening folder containing Images------------#
 @app.route('/open', methods=['POST'])
 def open_photos():
     print("open button clicked!")
@@ -471,7 +560,6 @@ def open_photos():
         return jsonify({'message': 'Folder opened successfully'})
     else:
         return jsonify({'error': 'Folder does not exist'}), 404
-
 
 if __name__ == "__main__":
     app.run(debug=True)

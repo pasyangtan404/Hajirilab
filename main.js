@@ -42,8 +42,8 @@ ipcMain.on('submit-login', (event, data) => {
         menuWindow = new BrowserWindow({
             width: 1000,
             height: 630,
-            minWidth: 770,
-            minHeight: 580,
+            minWidth: 1200,
+            minHeight: 650,
             frame: false,
             titleBarStyle: "hidden",
             webPreferences: {

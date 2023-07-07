@@ -2,6 +2,7 @@ import os
 import cv2
 import random
 import numpy as np
+import csv
 from skimage.feature import hog, local_binary_pattern
 from sklearn.svm import SVC
 from sklearn.model_selection import train_test_split
@@ -22,16 +23,29 @@ neighbors = 8
 # Get the directory of the app.py file
 current_dir = os.path.dirname(os.path.abspath(__file__))
 
-model_file_path = os.path.join(current_dir, '..', 'face_recognition_model.pkl')
+face_file_path = os.path.join(current_dir, '../detectors/haarcascade_frontalface_default.xml')
+eye_file_path = os.path.join(current_dir, '../detectors/haarcascade_eye.xml')
+model_file_path = os.path.join(current_dir, '../detectors/face_recognition_model.pkl')
+features_file_path = os.path.join(current_dir, '../detectors/features.npy')
+labels_file_path = os.path.join(current_dir, '../detectors/labels.npy')
+
+# Set up the video capture
+cap = cv2.VideoCapture(0)
+
+# Create a flag to track if attendance has been recorded
+attendance_recorded = False
+        
+# Create a set to store recorded employee IDs
+recorded_employee_ids = set()
 
 def extract_faces(img):
-    face_detector = cv2.CascadeClassifier('D:/finalyearproject/hajirilab/detectors/haarcascade_frontalface_default.xml')
+    face_detector = cv2.CascadeClassifier(face_file_path)
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     faces = face_detector.detectMultiScale(gray, scaleFactor=1.1, minNeighbors=5, minSize=(30, 30))
     return faces
 
 def get_eyes(img):
-    eye_detector = cv2.CascadeClassifier('D:/finalyearproject/hajirilab/detectors/haarcascade_eye.xml')
+    eye_detector = cv2.CascadeClassifier(eye_file_path)
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     eyes = eye_detector.detectMultiScale(gray, scaleFactor=1.1, minNeighbors=5, minSize=(30, 30))
     return eyes
@@ -58,9 +72,15 @@ def preprocess_face(img):
     return face_img
     
 def draw_frame(frame, x, y, w, h, color, text):
+    lines = text.split('\n')
+    text_x = x
+    text_y = y - 10
+    
     # Draw the bounding box and display information about the recognized face
     cv2.rectangle(frame, (x, y), (x+w, y+h), color, 2)
-    cv2.putText(frame, text, (30, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, color, 2, cv2.LINE_AA)
+    for line in lines:
+        cv2.putText(frame, line, (text_x, text_y), cv2.FONT_HERSHEY_SIMPLEX, 1, color, 2, cv2.LINE_AA)
+        text_y += 30
     
 def data_augmentation(img):
     # Normalize the pixel values of the face image to be between 0 and 1
@@ -163,6 +183,9 @@ def train():
     grid_search = GridSearchCV(pipeline, param_grid, cv=5)
         
     features, labels = extract_features_labels()
+    
+    np.save(features_file_path,features)
+    np.save(labels_file_path, labels)
         
     # Split the data into training and validation sets
     train_features, val_features, train_labels, val_labels = train_test_split(
@@ -173,6 +196,7 @@ def train():
     
     # Print the best hyperparameters
     print("Best Hyperparameters:", grid_search.best_params_)
+    # Best Hyperparameters: {'svm__C': 1, 'svm__gamma': 'scale', 'svm__kernel': 'linear'}
 
     # Get the best model
     model = grid_search.best_estimator_
@@ -192,10 +216,32 @@ def train():
     
 def add_train():
     model = joblib.load(model_file_path)
+    
+    old_features = np.load(features_file_path)
+    old_labels = np.load(labels_file_path)
+    
     new_features, new_labels = extract_features_labels()
     
-    # Update the existing model with new data using partial_fit
-    model.fit(new_features, new_labels)
+    # Concatenate the original and new features and labels
+    combined_features = np.concatenate((old_features, new_features))
+    combined_labels = np.concatenate((old_labels, new_labels))
+    
+    np.save(features_file_path,combined_features)
+    np.save(labels_file_path, combined_labels)
+    
+    # Split the combined features and labels into training and validation sets
+    train_features, val_features, train_labels, val_labels = train_test_split(
+    combined_features, combined_labels, test_size=0.2, random_state=42)
+    
+    model.fit(train_features, train_labels)
+    
+    train_predictions = model.predict(train_features)
+    train_accuracy = accuracy_score(train_labels, train_predictions)
+    print('Training Accuracy:', train_accuracy)
+
+    val_predictions = model.predict(val_features)
+    val_accuracy = accuracy_score(val_labels, val_predictions)
+    print('Validation Accuracy:', val_accuracy)
 
     # Save the updated model
     joblib.dump(model, model_file_path)
@@ -208,7 +254,6 @@ def train_model():
     
 def recognize_face(img):
     # Load the trained face recognition model
-    model_file_path = os.path.join(current_dir, '..', 'face_recognition_model.pkl')
     model = joblib.load(model_file_path)
 
     # Extract features from the face image
