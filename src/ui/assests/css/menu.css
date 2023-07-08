@@ -288,8 +288,12 @@ body {
     font-size: medium;
     font-weight: 400;
 }
+.card {
+    transition: all .3s ease-in-out;
+}
 
 .card-body {
+    border: none;
     background-color: #f9f9f9;
     padding: 15px 25px;
     border-radius: 5px;
@@ -328,7 +332,10 @@ body {
 .import-btn,
 .export-btn,
 .att-update-btn,
-.att-reset-btn {
+.att-reset-btn,
+.new-email-btn,
+.new-username-btn,
+.new-password-btn {
     border-radius: 10px;
     width: 100px;
     background-color: #6495ED;
@@ -406,19 +413,29 @@ body {
 
 .recog-content .card {
     border: none;
-    margin: 30px 7px 70px;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, .05);
-    border-radius: .375rem;
-    padding: 10px;
-    transition: all .3s ease-in-out;
+    background-color: #f9f9f9;
+    margin: 30px 7px 67px;
+    box-shadow: 0px 0px 10px #ccc;
+    border-radius: 5px;
+    padding: 15px 25px;
 }
 
-.recog-content .card:hover {
+.setting-content .card {
+    margin: 0 auto;
+    border: none;
+    background-color: #f9f9f9;
+    margin: 10px 7px 20px;
+    box-shadow: 0px 0px 10px #ccc;
+    border-radius: 5px;
+    padding: 15px 25px;
+}
+
+.card:hover {
     transform: translateY(-5px);
     box-shadow: 0 10px 15px rgba(0, 0, 0, .1);
 }
 
-.recog-content .card-title {
+.card-title {
     font-size: 18px;
     font-weight: 700;
     margin-bottom: 20px;
@@ -429,15 +446,4 @@ body {
     font-weight: 400;
     margin-bottom: 20px;
     color: #6c757d;
-}
-
-.recog-content .card-link {
-    font-size: 16px;
-    font-weight: 700;
-    color: #007bff;
-    text-decoration: none;
-}
-
-.recog-content .card-link:hover {
-    text-decoration: underline;
 }

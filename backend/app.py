@@ -51,7 +51,7 @@ class Users(db.Model):
 # with app.app_context():
 #     db.create_all()
 
-class UserSchema(ma.Schema):
+class UserSchema(Schema):
     id = fields.Int()
     username = fields.Str()
     email = fields.Email()
@@ -76,6 +76,30 @@ def login():
         return jsonify({'success': True, 'user': result})
     else:
         return jsonify({'success': False, 'message': 'Invalid username or password'})
+
+@app.route('/change_email', methods=['POST'])
+def change_email():
+    try:   
+        data = request.get_json()
+        
+        new_email = data.get('email')
+        password = data.get('password')
+        
+        user = Users.query.first()
+        if user and password == user.password:
+            # Check if new email is different from the current email
+            if new_email != user.email:
+                # Update the email in the database
+                user.email = new_email
+                db.session.commit()
+                return jsonify({'message': 'Email updated successfully'})
+            else:
+                return jsonify({'error': 'New email must be different from current email'})
+        else:
+            return jsonify({'error': 'Invalid password'})
+
+    except Exception as e:
+        return jsonify({'error': str(e)})
     
 class Emp_details(db.Model):
     id = db.Column(db.Integer, unique=True, autoincrement=True)
@@ -560,6 +584,40 @@ def open_photos():
         return jsonify({'message': 'Folder opened successfully'})
     else:
         return jsonify({'error': 'Folder does not exist'}), 404
+
+data = []
+
+@app.route('/import_csv', methods=['POST'])
+def importCSV():
+    try:
+        file = request.files['csv_file']
+        if file and file.filename.endswith('.csv'):
+            df = pd.read_csv(file)
+            # Replace empty or null values with 'N/A'
+            df.fillna('N/A', inplace=True)
+            data = df.to_dict('records')
+            return jsonify({'data': data})
+        else:
+            return jsonify({'error': 'Invalid file format'})
+
+    except Exception as e:
+        return jsonify({'error': str(e)})
+  
+@app.route('/update_row', methods=['POST'])
+def updateCSV():
+    try:
+        updated_row = request.json
+
+       # Update the row in the data list based on Employee ID
+        for i, row in enumerate(data):
+            if row['Employee ID'] == updated_row['Employee ID']:
+                data[i] = updated_row
+                break
+
+        return jsonify({'message': 'Row updated successfully'})
+
+    except Exception as e:
+        return jsonify({'error': str(e)})
 
 if __name__ == "__main__":
     app.run(debug=True)

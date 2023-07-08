@@ -94,12 +94,14 @@ body {
     background-color: #f2f2f2;
 }
 
-.login-header {
+.login-header,
+.forgot-pass-header {
     margin-top: 110px;
     margin-left: 35px;
 }
 
-.login-form {
+.login-form,
+.forgot-pass-form {
     margin-left: 35px;
 }
 
@@ -111,8 +113,14 @@ body {
     padding-left: 170px;
 }
 
+.login-show-error,
+.email-show-error {
+    color: red;
+    font-weight: bold;
+}
+
 .login-toggle-password-icon {
-    top : 20px;
+    top: 20px;
     right: 15px;
     position: absolute;
     color: grey;
@@ -124,7 +132,8 @@ a {
     text-decoration: none;
 }
 
-.login-btn {
+.login-btn,
+.next-btn {
     border-radius: 10px;
     background-color: #6495ED;
     color: #fff;
@@ -132,6 +141,11 @@ a {
     line-height: 2;
 }
 
-.login-btn:hover {
+.next-btn-container {
+    margin: 30px 0 0 110px;
+}
+
+.login-btn:hover,
+.next-btn:hover {
     background-color: #6495ED;
 }

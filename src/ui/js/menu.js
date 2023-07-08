@@ -16,6 +16,9 @@ document.getElementById('menu-close-btn').addEventListener('click', () => {
     ipcRenderer.send('close-window');
 })
 
+document.getElementById('log-out').addEventListener('click', () => {
+    ipcRenderer.send('logout');
+});
 
 /*--------- for sidebar and content change ------------*/
 let sidebar = document.querySelector(".sidebar");
@@ -58,9 +61,9 @@ options.forEach(function (option) {
 
 /*----------- for save, update and delete button ---------------*/
 
-const form = document.querySelector('form');
+const form1 = document.querySelector('#content1 form');
 
-form.addEventListener('submit', event => {
+form1.addEventListener('submit', event => {
     event.preventDefault();
     const employee_id = document.querySelector('#employee-id').value;
     const first_name = document.querySelector('#first-name').value;
@@ -101,7 +104,6 @@ form.addEventListener('submit', event => {
 });
 
 
-
 function saveEmployeeDetails(data) {
     fetch('http://127.0.0.1:5000/save', {
         method: 'POST',
@@ -118,7 +120,6 @@ function saveEmployeeDetails(data) {
             console.log(data);
             if (data.message === 'Employee details saved successfully') {
                 alert('Employee details saved successfully');
-                window.location.reload();
             } else if (data.message === 'Employee details already exist') {
                 alert('Employee details already exist');
             }
@@ -147,10 +148,8 @@ function updateEmployeeDetails(data) {
             console.log(data);
             if (data.updated === true) {
                 alert('Employee details updated successfully');
-                window.location.reload();
             } else if (data.updated === false) {
                 alert('No changes made');
-                window.location.reload();
             } else {
                 alert('An error occurred while updating employee details');
             }
@@ -175,7 +174,6 @@ function deleteEmployeeDetails(data) {
         .then(data => {
             console.log(data);
             alert('Employee details deleted successfully');
-            window.location.reload();
         })
         .catch(error => {
             console.error(error);
@@ -183,9 +181,13 @@ function deleteEmployeeDetails(data) {
         });
 }
 
-document.getElementById('reset-btn').addEventListener('click', () => {
-    const form = document.querySelector('form');
-    form.reset();
+const resetButton1 = document.querySelector('#reset-btn');
+
+resetButton1.addEventListener('click', event => {
+    event.preventDefault();
+    
+    const form1 = document.querySelector('#content1 form');
+    form1.reset();
 });
 
 /*----------- for add button to capture photos ---------------*/
@@ -217,7 +219,6 @@ function capturePhotos() {
         .then(data => {
             console.log(data);
             alert('Photos captured and preprocessed successfully');
-            window.location.reload();
         })
         .catch(error => {
             console.error(error);
@@ -236,7 +237,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
 /*----------- for showing details of employee ---------------*/
 function populateTable() {
-    fetch('http://127.0.0.1:5000/employees')
+    const request = new Request('http://127.0.0.1:5000/employees');
+    request.cache = 'force-cache';
+    fetch(request)
         .then(response => {
             if (!response.ok) {
                 throw new Error(`HTTP ${response.status} ${response.statusText}`);
@@ -246,9 +249,9 @@ function populateTable() {
         .then(data => {
             const tableBody = document.querySelector('#employee-table tbody');
             tableBody.innerHTML = '';
-            const columnName = ['employee_id', 'first_name', 'last_name', 
-                                'gender', 'dob', 'email', 'phone_num', 'address', 
-                                'department', 'position', 'photo_sample'];
+            const columnName = ['employee_id', 'first_name', 'last_name',
+                'gender', 'dob', 'email', 'phone_num', 'address',
+                'department', 'position', 'photo_sample'];
 
             data.forEach(employee => {
                 const row = document.createElement('tr');
@@ -260,7 +263,7 @@ function populateTable() {
                     const cell = document.createElement('td');
                     cell.textContent = employee[prop];
                     row.appendChild(cell);
-                  });
+                });
 
                 tableBody.appendChild(row);
             });
@@ -268,7 +271,6 @@ function populateTable() {
         .catch(error => {
             console.error(error);
             alert('An error occurred while fetching employee details');
-            window.location.reload();
         });
 }
 
@@ -287,14 +289,15 @@ function fillForm(employee) {
 }
 
 // Call the populateTable function to load employee details on page load
-window.addEventListener('load', populateTable);
+window.addEventListener('load', populateTable)
 
 /*----------- for train and attendance button ---------------*/
 // Get the train button element
 const trainButton = document.getElementById('train-btn');
 
 // Add event listener to the train button
-trainButton.addEventListener('click', () => {
+trainButton.addEventListener('click', event => {
+    event.preventDefault();
     // Send a POST request to the server to trigger the training
     fetch('http://127.0.0.1:5000/train', {
         method: 'POST'
@@ -305,15 +308,12 @@ trainButton.addEventListener('click', () => {
             console.log(data);
             if (data.success) {
                 alert('Model trained successfully!');
-                window.location.reload();
             } else {
                 alert('An error occurred during training.');
-                window.location.reload();
             }
         })
         .catch(error => {
             console.error(error);
-            alert('An error occurred while sending the training request.');
         });
 });
 
@@ -334,14 +334,14 @@ function check_In() {
         .then(data => {
             console.log(data);
             alert('Attendance taken successfully');
-            window.location.reload();
         })
         .catch(error => {
             console.error(error);
         });
 }
 
-document.getElementById('check-out-btn').addEventListener('click', () => {
+document.getElementById('check-out-btn').addEventListener('click', event => {
+    event.preventDefault();
     check_Out();
 });
 
@@ -372,7 +372,8 @@ function check_Out() {
         });
 }
 
-document.getElementById('attendance-btn').addEventListener('click', () => {
+document.getElementById('attendance-btn').addEventListener('click', event => {
+    event.preventDefault();
     check_In();
 });
 
@@ -450,41 +451,33 @@ function importCSV() {
     fileInput.type = 'file';
 
     fileInput.onchange = function (event) {
+        event.preventDefault();
         var file = event.target.files[0];
 
         if (file) {
-            var reader = new FileReader();
+            var formData = new FormData();
+            formData.append('csv_file', file);
 
-            reader.onload = function (e) {
-                var contents = e.target.result;
-                processCSVData(contents);
-            };
-
-            reader.readAsText(file);
+            fetch('http://127.0.0.1:5000/import_csv', {
+                method: 'POST',
+                body: formData
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.error) {
+                        console.error(data.error);
+                    } else {
+                        updateTable(data.data);
+                    }
+                })
+                .catch(error => {
+                    console.error(error);
+                });
         }
     };
 
     fileInput.accept = '.csv';
     fileInput.click();
-}
-
-function processCSVData(contents) {
-    var rows = contents.split('\n');
-    var headers = rows[0].split(',').map(header => header.trim());
-    var data = [];
-
-    for (var i = 1; i < rows.length; i++) {
-        var row = rows[i].split(',');
-        var rowData = {};
-
-        for (var j = 0; j < headers.length; j++) {
-            rowData[headers[j]] = row[j];
-        }
-
-        data.push(rowData);
-    }
-
-    updateTable(data);
 }
 
 function updateTable(data) {
@@ -494,15 +487,17 @@ function updateTable(data) {
     // Clear existing table rows
     tableBody.innerHTML = '';
 
+    var columnOrder = ['Employee ID', 'First Name', 'Last Name', 'Department', 'Date', 'Check-In', 'Check-Out', 'Attendance Status'];
+
     data.forEach(row => {
         var tableRow = document.createElement('tr');
         tableRow.addEventListener('click', () => {
             updateFormFields(row);
         });
 
-        Object.values(row).forEach(value => {
+        columnOrder.forEach(column => {
             var cell = document.createElement('td');
-            cell.textContent = value;
+            cell.textContent = row[column];
             tableRow.appendChild(cell);
         });
 
@@ -517,7 +512,8 @@ function updateFormFields(row) {
     document.querySelector('#att-last-name').value = row['Last Name'];
     document.querySelector('#att-department').value = row['Department'];
     document.querySelector('#check-in').value = convertTimeFormat(row['Check-In']);
-    document.querySelector('#check-out').value = convertTimeFormat(row['Check-Out']);
+    var checkOutValue = row['Check-Out'];
+    document.querySelector('#check-out').value = checkOutValue === 'N/A' ? 'N/A' : convertTimeFormat(checkOutValue);
     document.querySelector('#attdate').value = row['Date'];
     document.querySelector('#att-status').value = row['Attendance Status'];
 }
@@ -541,11 +537,114 @@ function convertTimeFormat(time) {
     return formattedTime;
 }
 
-document.getElementById('import-btn').addEventListener('click', () => {
+function updateDetails() {
+    // Get the updated details from the form
+    var employeeId = document.querySelector('#employee-id').value;
+    var firstName = document.querySelector('#first-name').value;
+    var lastName = document.querySelector('#last-name').value;
+    var department = document.querySelector('#att-department').value;
+    var checkIn = document.querySelector('#check-in').value
+    var checkOut = document.querySelector('#check-out').value
+    var date = document.querySelector('#attdate').value
+    var status = document.querySelector('#att-status').value
+
+    var updatedRow = {
+        'Employee ID': employeeId,
+        'First Name': firstName,
+        'Last Name': lastName,
+        'Department': department,
+        'Date': date,
+        'Check-In': checkIn,
+        'Check-Out': checkOut === 'N/A' ? 'N/A' : convertTimeTo24HourFormat(checkOut),
+        'Attendance Status': status
+    };
+
+    fetch('http://127.0.0.1:5000/update_row', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ 'row': updatedRow })
+    })
+        .then(response => response.json())
+        .then(data => {
+            if (data.error) {
+                console.error(data.error);
+            } else {
+                console.log(data.message);
+                // Update the table with the new row data
+                updateTable(data.data);
+            }
+        })
+        .catch(error => {
+            console.error(error);
+        });
+}
+
+function convertTimeTo24HourFormat(time) {
+    var [formattedTime, period] = time.split(' ');
+    var [hours, minutes] = formattedTime.split(':');
+
+    if (period === 'PM') {
+        hours = (parseInt(hours) + 12).toString();
+    }
+
+    return hours + ':' + minutes;
+}
+
+document.getElementById('import-btn').addEventListener('click', event => {
+    event.preventDefault();
     importCSV();
 });
 
-document.getElementById('att-reset-btn').addEventListener('click', () => {
-    const form = document.querySelector('#att-form');
-    form.reset();
+document.querySelector('#att-update-button').addEventListener('click', event => {
+    event.preventDefault();
+    updateDetails();
+});
+
+
+const resetButton2 = document.querySelector('#att-reset-button');
+resetButton2.addEventListener('click', event => {
+    event.preventDefault();
+    
+    const form2 = document.querySelector('#content2 form');
+    form2.reset();
+});
+
+const saveButton = document.querySelector('#new-email-btn');
+saveButton.addEventListener('click', event => {
+    event.preventDefault();
+    const email = document.querySelector('#email').value;
+    const password = document.querySelector('#password').value;
+
+    console.log(email);
+    console.log(password);
+
+    const data = {
+        email: email,
+        password: password,
+    };
+
+    fetch('http://127.0.0.1:5000/change_email', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+    })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP ${response.status} ${response.statusText}`);
+            }
+            return response.json();
+        })
+        .then(response => {
+            if (response.error) {
+                alert(response.error);
+            } else {
+                alert(response.message);
+            }
+        })
+        .catch(error => {
+            console.error(error);
+            alert('An error occurred while processing the request');
+        });
 });

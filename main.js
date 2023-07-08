@@ -1,11 +1,11 @@
-const { app, ipcMain, BrowserWindow, Menu} = require("electron")
+const { app, ipcMain, BrowserWindow, Menu } = require("electron")
 require('electron-reload')(__dirname)
 Menu.setApplicationMenu(false)
 
 let mainWindow;
-var menuWindow = null;
+let menuWindow = null;
 
-app.whenReady().then(() => {
+function createMainWindow() {
     mainWindow = new BrowserWindow({
         width: 1000,
         height: 700,
@@ -23,12 +23,27 @@ app.whenReady().then(() => {
         }
     })
 
-    mainWindow.loadFile('src/ui/login.html')
-    mainWindow.webContents.openDevTools()
+    mainWindow.loadFile('src/ui/login.html');
+    mainWindow.webContents.openDevTools();
     mainWindow.once('ready-to-show', function () {
-        mainWindow.show()
+        mainWindow.show();
+    });
+
+    mainWindow.on('closed', function () {
+        mainWindow = null;
     })
-})
+}
+
+app.whenReady().then(() => {
+    createMainWindow();
+});
+
+ipcMain.on('show-forgot-password', () => {
+    const mainWindow = BrowserWindow.getFocusedWindow();
+
+    // Send a message to the renderer process to show the forgot password content
+    mainWindow.webContents.send('show-forgot-password');
+});
 
 ipcMain.on('submit-login', (event, data) => {
     console.log('Received login data:', data);
@@ -37,7 +52,10 @@ ipcMain.on('submit-login', (event, data) => {
     console.log(parsedData)
 
     if (parsedData.success == true) {
-        event.sender.send('login-status', 'success');
+        if (menuWindow) {
+            menuWindow.close();
+            menuWindow = null;
+        }
 
         menuWindow = new BrowserWindow({
             width: 1000,
@@ -56,7 +74,7 @@ ipcMain.on('submit-login', (event, data) => {
         menuWindow.on('error', (error) => {
             console.error('An error occurred while creating the menu window:', error);
         });
-        
+
         console.log('Loading menu.html...');
         menuWindow.loadFile('src/ui/menu.html')
         menuWindow.maximize()
@@ -66,7 +84,13 @@ ipcMain.on('submit-login', (event, data) => {
             menuWindow.show();
         });
 
-        mainWindow.close();
+        menuWindow.on('closed', function () {
+            menuWindow = null;
+        });
+
+        if (mainWindow) {
+            mainWindow.close();
+        }
 
     } else {
         event.sender.send('login-status', 'fail');
@@ -74,13 +98,24 @@ ipcMain.on('submit-login', (event, data) => {
 })
 
 ipcMain.on('menu-maximize-window', () => {
-    if (menuWindow.isMaximized()) {
-        menuWindow.unmaximize();
-    }
-    else {
-        menuWindow.maximize();
+    if (menuWindow && !menuWindow.isDestroyed()) {
+        if (menuWindow.isMaximized()) {
+            menuWindow.unmaximize();
+        }
+        else {
+            menuWindow.maximize();
+        }
     }
 })
+
+ipcMain.on('logout', () => {
+    if (menuWindow) {
+        menuWindow.close();
+        menuWindow = null;
+    }
+
+    createMainWindow();
+});
 
 app.on('window-all-closed', () => {
     if (process.platform != 'darwin') {

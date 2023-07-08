@@ -1,4 +1,3 @@
-const { ipcRenderer } = require('electron');
 const request = require('request');
 
 // minimize button
@@ -24,13 +23,16 @@ document.getElementById('login-toogle-password').addEventListener('click', () =>
   }
 })
 
-const form = document.querySelector('form');
+const form1 = document.querySelector('#content1 form');
 
-form.addEventListener('submit', event => {
+form1.addEventListener('submit', event => {
   event.preventDefault();
 
-  const username = document.querySelector('#floatingUsername').value;
-  const password = document.querySelector('#floatingPassword').value;
+  const usernameInput = document.querySelector('#floatingUsername');
+  const passwordInput = document.querySelector('#floatingPassword');
+  let username = usernameInput.value;
+  let password = passwordInput.value;
+
 
   console.log(username)
   console.log(password)
@@ -48,24 +50,27 @@ form.addEventListener('submit', event => {
       console.error(error);
     } else if (response.statusCode !== 200) {
       console.error(`HTTP ${response.statusCode} ${response.statusMessage}`);
+      usernameInput.value = '';
+      passwordInput.value = '';
     } else {
-      ipcRenderer.send('submit-login', body);
+      const result = JSON.parse(body);
+      if (result.success) {
+        ipcRenderer.send('submit-login', body);
+      } else {
+        const loginErrorLabel = document.getElementById('login-show-error');
+        loginErrorLabel.textContent = result.message;
+        usernameInput.value = '';
+        passwordInput.value = '';
+      }
     }
   })
 })
 
-ipcRenderer.on('login-status', (status) => {
-  const loginStatus = document.getElementById('login-show-error');
+const forgotPassword = document.getElementById('forgotPassword');
+forgotPassword.addEventListener('click', event => {
+  event.preventDefault();
 
-  switch (status) {
-    case 'success':
-      loginStatus.innerHTML = 'Login successful.';
-      break;
-    case 'fail':
-      loginStatus.innerHTML = 'Invalid username or password.';
-      break;
-    case 'error':
-      loginStatus.innerHTML = 'An error occurred during login validation.';
-      break;
-  }
+  ipcRenderer.send('show-forgot-password');
 });
+
+

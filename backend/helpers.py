@@ -26,8 +26,6 @@ current_dir = os.path.dirname(os.path.abspath(__file__))
 face_file_path = os.path.join(current_dir, '../detectors/haarcascade_frontalface_default.xml')
 eye_file_path = os.path.join(current_dir, '../detectors/haarcascade_eye.xml')
 model_file_path = os.path.join(current_dir, '../detectors/face_recognition_model.pkl')
-features_file_path = os.path.join(current_dir, '../detectors/features.npy')
-labels_file_path = os.path.join(current_dir, '../detectors/labels.npy')
 
 # Set up the video capture
 cap = cv2.VideoCapture(0)
@@ -178,19 +176,16 @@ def train():
         'svm__kernel': ['linear', 'rbf'],
         'svm__gamma': ['scale', 'auto']
     }
-    
+
     # Perform grid search cross-validation to find the best hyperparameters
     grid_search = GridSearchCV(pipeline, param_grid, cv=5)
         
     features, labels = extract_features_labels()
-    
-    np.save(features_file_path,features)
-    np.save(labels_file_path, labels)
         
     # Split the data into training and validation sets
     train_features, val_features, train_labels, val_labels = train_test_split(
     features, labels, test_size=0.2, random_state=42)
-
+    
     # Fit the model using grid search cross-validation
     grid_search.fit(train_features, train_labels) 
     
@@ -211,28 +206,21 @@ def train():
     val_predictions = model.predict(val_features)
     val_accuracy = accuracy_score(val_labels, val_predictions)
     print('Validation Accuracy:', val_accuracy)
+    
+    del features, labels, train_features, train_labels
 
     joblib.dump(model, model_file_path)
     
 def add_train():
     model = joblib.load(model_file_path)
     
-    old_features = np.load(features_file_path)
-    old_labels = np.load(labels_file_path)
-    
-    new_features, new_labels = extract_features_labels()
-    
-    # Concatenate the original and new features and labels
-    combined_features = np.concatenate((old_features, new_features))
-    combined_labels = np.concatenate((old_labels, new_labels))
-    
-    np.save(features_file_path,combined_features)
-    np.save(labels_file_path, combined_labels)
+    features, labels = extract_features_labels()
     
     # Split the combined features and labels into training and validation sets
     train_features, val_features, train_labels, val_labels = train_test_split(
-    combined_features, combined_labels, test_size=0.2, random_state=42)
+    features, labels, test_size=0.2, random_state=42)
     
+    # Train the model using your training data
     model.fit(train_features, train_labels)
     
     train_predictions = model.predict(train_features)

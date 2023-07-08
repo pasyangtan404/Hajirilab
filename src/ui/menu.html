@@ -48,14 +48,6 @@
                         <a id="user-dropdown-toggle">
                             <img src="./assests/images/user.png" height="40px" width="40px">
                         </a>
-                        <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="#">Change Username</a></li>
-                            <li><a class="dropdown-item" href="#">Change Password</a></li>
-                            <li>
-                                <hr class="dropdown-divider">
-                            </li>
-                            <li><a class="dropdown-item" href="#">Logout</a></li>
-                        </ul>
                     </div>
                 </div>
             </div>
@@ -86,12 +78,6 @@
                             </a>
                         </li>
                         <li class="option" data-value="option4">
-                            <a class="nav-link" title="Analytics">
-                                <i class='bx bx-pie-chart-alt-2'></i>
-                                <span class="links_name">Analytics</span>
-                            </a>
-                        </li>
-                        <li class="option" data-value="option5">
                             <a class="nav-link" title="Settings">
                                 <i class='bx bx-cog'></i>
                                 <span class="links_name">Settings</span>
@@ -128,117 +114,124 @@
                                             <div class="card mb-4">
                                                 <div class="card-body">
                                                     <h4 class="card-title pb-1">Manage Information</h4>
-                                                    <form class="container">
-                                                        <div class="row">
-                                                            <div class="col-md-6">
-                                                                <div class="form-group">
-                                                                    <label for="employee-id" class="form-label">Employee
-                                                                        ID:</label>
-                                                                    <input type="text" class="form-control"
-                                                                        id="employee-id" required>
-                                                                </div>
-                                                                <div class="form-group">
-                                                                    <label for="first-name" class="form-label">First
-                                                                        Name:</label>
-                                                                    <input type="text" class="form-control"
-                                                                        id="first-name" required>
-                                                                </div>
-                                                                <div class="form-group">
-                                                                    <label for="gender"
-                                                                        class="form-label">Gender:</label>
-                                                                    <select class="form-select" id="gender" required>
-                                                                        <option value="">Select</option>
-                                                                        <option value="Male">Male</option>
-                                                                        <option value="Female">Female</option>
-                                                                        <option value="Other">Other</option>
-                                                                    </select>
-                                                                </div>
-                                                                <div class="form-group">
-                                                                    <label for="email" class="form-label">Email:</label>
-                                                                    <input type="email" class="form-control" id="email"
-                                                                        required>
-                                                                </div>
-                                                                <div class="form-group">
-                                                                    <label for="address"
-                                                                        class="form-label">Address:</label>
-                                                                    <textarea class="form-control" id="address" rows="3"
-                                                                        required></textarea>
-                                                                </div>
-                                                                <div class="button-container">
-                                                                    <div class="row">
-                                                                        <div class="col-md-6 mb-2">
-                                                                            <button type="submit" id="save-btn"
-                                                                                class="btn btn-block save-btn">Save</button>
-                                                                        </div>
-                                                                        <div class="col-md-6 mb-2">
-                                                                            <button type="submit" id="update-btn"
-                                                                                class="btn btn-block update-btn">Update</button>
-                                                                        </div>
+                                                    <div id="content1">
+                                                        <form class="container">
+                                                            <div class="row">
+                                                                <div class="col-md-6">
+                                                                    <div class="form-group">
+                                                                        <label for="employee-id"
+                                                                            class="form-label">Employee
+                                                                            ID:</label>
+                                                                        <input type="text" class="form-control"
+                                                                            id="employee-id" required>
                                                                     </div>
-                                                                    <button type="submit" id="add-photo-btn"
-                                                                        class="btn btn-block add-photo-btn">Add
-                                                                        Photos</button>
+                                                                    <div class="form-group">
+                                                                        <label for="first-name" class="form-label">First
+                                                                            Name:</label>
+                                                                        <input type="text" class="form-control"
+                                                                            id="first-name" required>
+                                                                    </div>
+                                                                    <div class="form-group">
+                                                                        <label for="gender"
+                                                                            class="form-label">Gender:</label>
+                                                                        <select class="form-select" id="gender"
+                                                                            required>
+                                                                            <option value="">Select</option>
+                                                                            <option value="Male">Male</option>
+                                                                            <option value="Female">Female</option>
+                                                                            <option value="Other">Other</option>
+                                                                        </select>
+                                                                    </div>
+                                                                    <div class="form-group">
+                                                                        <label for="email"
+                                                                            class="form-label">Email:</label>
+                                                                        <input type="email" class="form-control"
+                                                                            id="email" required>
+                                                                    </div>
+                                                                    <div class="form-group">
+                                                                        <label for="address"
+                                                                            class="form-label">Address:</label>
+                                                                        <textarea class="form-control" id="address"
+                                                                            rows="3" required></textarea>
+                                                                    </div>
+                                                                    <div class="button-container">
+                                                                        <div class="row">
+                                                                            <div class="col-md-6 mb-2">
+                                                                                <button type="submit" id="save-btn"
+                                                                                    class="btn btn-block save-btn">Save</button>
+                                                                            </div>
+                                                                            <div class="col-md-6 mb-2">
+                                                                                <button type="submit" id="update-btn"
+                                                                                    class="btn btn-block update-btn">Update</button>
+                                                                            </div>
+                                                                        </div>
+                                                                        <button type="button" id="add-photo-btn"
+                                                                            class="btn btn-block add-photo-btn">Add
+                                                                            Photos</button>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-md-6">
+                                                                    <div class="form-group">
+                                                                        <label for="department"
+                                                                            class="form-label">Department:</label>
+                                                                        <select class="form-select" id="department"
+                                                                            required>
+                                                                            <option value="">Select</option>
+                                                                            <option value="Administration">
+                                                                                Administration
+                                                                            </option>
+                                                                            <option value="Finance">Finance</option>
+                                                                            <option value="HR">HR</option>
+                                                                            <option value="IT">IT</option>
+                                                                            <option value="Operation">Operation</option>
+                                                                            <option value="Sales and Marketing">Sales
+                                                                                and
+                                                                                Marketing</option>
+                                                                        </select>
+                                                                    </div>
+                                                                    <div class="form-group">
+                                                                        <label for="last-name" class="form-label">Last
+                                                                            Name:</label>
+                                                                        <input type="text" class="form-control"
+                                                                            id="last-name" required>
+                                                                    </div>
+                                                                    <div class="form-group">
+                                                                        <label for="dob" class="form-label">Date of
+                                                                            Birth:</label>
+                                                                        <input type="date" class="form-control" id="dob"
+                                                                            required>
+                                                                    </div>
+                                                                    <div class="form-group">
+                                                                        <label for="phone" class="form-label">Phone
+                                                                            Number:</label>
+                                                                        <input type="tel" class="form-control"
+                                                                            id="phone" required>
+                                                                    </div>
+                                                                    <div class="form-group">
+                                                                        <label for="position"
+                                                                            class="form-label">Position:</label>
+                                                                        <input type="text" class="form-control"
+                                                                            id="position" required>
+                                                                    </div>
+                                                                    <div class="button-container2">
+                                                                        <div class="row">
+                                                                            <div class="col-md-6 mb-2">
+                                                                                <button type="submit" id="delete-btn"
+                                                                                    class="btn btn-block delete-btn">Delete</button>
+                                                                            </div>
+                                                                            <div class="col-md-6 mb-2">
+                                                                                <button type="reset" id="reset-btn"
+                                                                                    class="btn btn-block reset-btn">Reset</button>
+                                                                            </div>
+                                                                        </div>
+                                                                        <button type="button" id="show-photo-btn"
+                                                                            class="btn btn-block show-photo-btn">Show
+                                                                            Photos</button>
+                                                                    </div>
                                                                 </div>
                                                             </div>
-                                                            <div class="col-md-6">
-                                                                <div class="form-group">
-                                                                    <label for="department"
-                                                                        class="form-label">Department:</label>
-                                                                    <select class="form-select" id="department"
-                                                                        required>
-                                                                        <option value="">Select</option>
-                                                                        <option value="Administration">Administration
-                                                                        </option>
-                                                                        <option value="Finance">Finance</option>
-                                                                        <option value="HR">HR</option>
-                                                                        <option value="IT">IT</option>
-                                                                        <option value="Operation">Operation</option>
-                                                                        <option value="Sales and Marketing">Sales and
-                                                                            Marketing</option>
-                                                                    </select>
-                                                                </div>
-                                                                <div class="form-group">
-                                                                    <label for="last-name" class="form-label">Last
-                                                                        Name:</label>
-                                                                    <input type="text" class="form-control"
-                                                                        id="last-name" required>
-                                                                </div>
-                                                                <div class="form-group">
-                                                                    <label for="dob" class="form-label">Date of
-                                                                        Birth:</label>
-                                                                    <input type="date" class="form-control" id="dob"
-                                                                        required>
-                                                                </div>
-                                                                <div class="form-group">
-                                                                    <label for="phone" class="form-label">Phone
-                                                                        Number:</label>
-                                                                    <input type="tel" class="form-control" id="phone"
-                                                                        required>
-                                                                </div>
-                                                                <div class="form-group">
-                                                                    <label for="position"
-                                                                        class="form-label">Position:</label>
-                                                                    <input type="text" class="form-control"
-                                                                        id="position" required>
-                                                                </div>
-                                                                <div class="button-container2">
-                                                                    <div class="row">
-                                                                        <div class="col-md-6 mb-2">
-                                                                            <button type="submit" id="delete-btn"
-                                                                                class="btn btn-block delete-btn">Delete</button>
-                                                                        </div>
-                                                                        <div class="col-md-6 mb-2">
-                                                                            <button type="submit" id="reset-btn"
-                                                                                class="btn btn-block reset-btn">Reset</button>
-                                                                        </div>
-                                                                    </div>
-                                                                    <button type="submit" id="show-photo-btn"
-                                                                        class="btn btn-block show-photo-btn">Show
-                                                                        Photos</button>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </form>
+                                                        </form>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
@@ -298,99 +291,109 @@
                                             <div class="card mb-4">
                                                 <div class="card-body">
                                                     <h4 class="card-title pb-1">Attendance Information</h4>
-                                                    <form class="container att-form">
-                                                        <div class="row">
-                                                            <div class="col-md-6">
-                                                                <div class="form-group">
-                                                                    <label for="employee-id" class="form-label">Employee
-                                                                        ID:</label>
-                                                                    <input type="text" class="form-control"
-                                                                        id="att-employee-id" required>
-                                                                </div>
-                                                                <div class="form-group">
-                                                                    <label for="first-name" class="form-label">First
-                                                                        Name:</label>
-                                                                    <input type="text" class="form-control"
-                                                                        id="att-first-name" required>
-                                                                </div>
-                                                                <div class="form-group">
-                                                                    <label for="time" class="form-label">Check-In:</label>
-                                                                    <input type="text" id="check-in" class="form-control"
-                                                                        required>
-                                                                </div>
-                                                                <div class="form-group">
-                                                                    <label for="attdate"
-                                                                        class="form-label">Date:</label>
-                                                                    <input type="date" class="form-control" id="attdate"
-                                                                        required>
-                                                                </div>
-                                                                <div class="button-container mt-4">
-                                                                    <div class="row">
-                                                                        <div class="col-md-6">
-                                                                            <button id="import-btn"
-                                                                                class="btn btn-block import-btn">Import
-                                                                                csv</button>
+                                                    <div id="content2">
+                                                        <form class="container">
+                                                            <div class="row">
+                                                                <div class="col-md-6">
+                                                                    <div class="form-group">
+                                                                        <label for="employee-id"
+                                                                            class="form-label">Employee
+                                                                            ID:</label>
+                                                                        <input type="text" class="form-control"
+                                                                            id="att-employee-id" required>
+                                                                    </div>
+                                                                    <div class="form-group">
+                                                                        <label for="first-name" class="form-label">First
+                                                                            Name:</label>
+                                                                        <input type="text" class="form-control"
+                                                                            id="att-first-name" required>
+                                                                    </div>
+                                                                    <div class="form-group">
+                                                                        <label for="time"
+                                                                            class="form-label">Check-In:</label>
+                                                                        <input type="text" id="check-in"
+                                                                            class="form-control" required>
+                                                                    </div>
+                                                                    <div class="form-group">
+                                                                        <label for="attdate"
+                                                                            class="form-label">Date:</label>
+                                                                        <input type="date" class="form-control"
+                                                                            id="attdate" required>
+                                                                    </div>
+                                                                    <div class="button-container mt-4">
+                                                                        <div class="row">
+                                                                            <div class="col-md-6">
+                                                                                <button type="button" id="import-btn"
+                                                                                    class="btn btn-block import-btn">Import
+                                                                                    csv</button>
+                                                                            </div>
+                                                                            <div class="col-md-6">
+                                                                                <button type="button" id="export-btn"
+                                                                                    class="btn btn-block export-btn">Export
+                                                                                    csv</button>
+                                                                            </div>
                                                                         </div>
-                                                                        <div class="col-md-6">
-                                                                            <button id="export-btn"
-                                                                                class="btn btn-block export-btn">Export
-                                                                                csv</button>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-md-6">
+                                                                    <div class="form-group">
+                                                                        <label for="department"
+                                                                            class="form-label">Department:</label>
+                                                                        <select class="form-select" id="att-department"
+                                                                            required>
+                                                                            <option value="">Select</option>
+                                                                            <option value="Administration">
+                                                                                Administration
+                                                                            </option>
+                                                                            <option value="Finance">Finance</option>
+                                                                            <option value="HR">HR</option>
+                                                                            <option value="IT">IT</option>
+                                                                            <option value="Operation">Operation</option>
+                                                                            <option value="Sales and Marketing">Sales
+                                                                                and
+                                                                                Marketing</option>
+                                                                        </select>
+                                                                    </div>
+                                                                    <div class="form-group">
+                                                                        <label for="last-name" class="form-label">Last
+                                                                            Name:</label>
+                                                                        <input type="text" class="form-control"
+                                                                            id="att-last-name" required>
+                                                                    </div>
+                                                                    <div class="form-group">
+                                                                        <label for="time"
+                                                                            class="form-label">Check-Out:</label>
+                                                                        <input type="text" id="check-out"
+                                                                            class="form-control" required>
+                                                                    </div>
+                                                                    <div class="form-group">
+                                                                        <label for="status"
+                                                                            class="form-label">Attendance
+                                                                            Status:</label>
+                                                                        <select class="form-select" id="att-status"
+                                                                            required>
+                                                                            <option value="">Select</option>
+                                                                            <option value="Present">Present</option>
+                                                                            <option value="Absent">Absent</option>
+                                                                        </select>
+                                                                    </div>
+                                                                    <div class="button-container mt-4">
+                                                                        <div class="row">
+                                                                            <div class="col-md-6">
+                                                                                <button type="submit"
+                                                                                    id="att-update-btn"
+                                                                                    class="btn btn-block att-update-btn">Update</button>
+                                                                            </div>
+                                                                            <div class="col-md-6">
+                                                                                <button type="reset" id="att-reset-btn"
+                                                                                    class="btn btn-block att-reset-btn">Reset</button>
+                                                                            </div>
                                                                         </div>
                                                                     </div>
                                                                 </div>
                                                             </div>
-                                                            <div class="col-md-6">
-                                                                <div class="form-group">
-                                                                    <label for="department"
-                                                                        class="form-label">Department:</label>
-                                                                    <select class="form-select" id="att-department"
-                                                                        required>
-                                                                        <option value="">Select</option>
-                                                                        <option value="Administration">Administration
-                                                                        </option>
-                                                                        <option value="Finance">Finance</option>
-                                                                        <option value="HR">HR</option>
-                                                                        <option value="IT">IT</option>
-                                                                        <option value="Operation">Operation</option>
-                                                                        <option value="Sales and Marketing">Sales and
-                                                                            Marketing</option>
-                                                                    </select>
-                                                                </div>
-                                                                <div class="form-group">
-                                                                    <label for="last-name" class="form-label">Last
-                                                                        Name:</label>
-                                                                    <input type="text" class="form-control"
-                                                                        id="att-last-name" required>
-                                                                </div>
-                                                                <div class="form-group">
-                                                                    <label for="time" class="form-label">Check-Out:</label>
-                                                                    <input type="text" id="check-out" class="form-control"
-                                                                        required>
-                                                                </div>
-                                                                <div class="form-group">
-                                                                    <label for="status" class="form-label">Attendance
-                                                                        Status:</label>
-                                                                    <select class="form-select" id="att-status" required>
-                                                                        <option value="">Select</option>
-                                                                        <option value="Present">Present</option>
-                                                                        <option value="Absent">Absent</option>
-                                                                    </select>
-                                                                </div>
-                                                                <div class="button-container mt-4">
-                                                                    <div class="row">
-                                                                        <div class="col-md-6">
-                                                                            <button type="submit" id="att-update-btn"
-                                                                                class="btn btn-block att-update-btn">Update</button>
-                                                                        </div>
-                                                                        <div class="col-md-6">
-                                                                            <button type="submit" id="att-reset-btn"
-                                                                                class="btn btn-block att-reset-btn">Reset</button>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </form>
+                                                        </form>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
@@ -452,15 +455,15 @@
                                                     <div class="card-text fw-bold">Check-In:</div>
                                                     <div class="card-text">Take attendance for today for entry</div>
                                                     <div class="button-container mb-3">
-                                                        <button type="submit" id="attendance-btn"
+                                                        <button type="button" id="attendance-btn"
                                                             class="btn btn-block attendance-btn">Check-In</button>
                                                     </div>
                                                 </div>
-                                                <div class="container">
+                                                <div class="container mt-2">
                                                     <div class="card-text fw-bold">Check-Out:</div>
                                                     <div class="card-text">Check out before exit</div>
                                                     <div class="button-container mb-3">
-                                                        <button type="submit" id="check-out-btn"
+                                                        <button type="button" id="check-out-btn"
                                                             class="btn btn-block check-out-btn">Check-Out</button>
                                                     </div>
                                                 </div>
@@ -471,7 +474,7 @@
                                                 <div class="card-title">Train Data</div>
                                                 <div class="card-text">Train face data for face recognition</div>
                                                 <div class="button-container mb-3">
-                                                    <button type="submit" id="train-btn"
+                                                    <button type="button" id="train-btn"
                                                         class="btn btn-block train-btn">Train Data</button>
                                                 </div>
                                             </div>
@@ -479,7 +482,7 @@
                                                 <div class="card-title">Photos</div>
                                                 <div class="card-text">Photos of employee's face</div>
                                                 <div class="button-container mb-3">
-                                                    <button type="submit" id="open-photo-btn"
+                                                    <button type="button" id="open-photo-btn"
                                                         class="btn btn-block open-photo-btn">Open</button>
                                                 </div>
                                             </div>
@@ -491,33 +494,119 @@
                     </div>
 
                     <div class="home-section position-relative overflow-y-auto pt-3" id="option4-content">
-                        <!-- Analytics content -->
-                        <div class="container-fluid min-vh-100 p-0">
-                            <div class="container-fluid menu-header-container">
-                                <h4>Analytics</h4>
-                            </div>
-                            <!-- Analytics Header -->
-                            <div class="header">
-                                <div class="container-fluid p-0">
-                                    <p>Welcome to analytics section. Here you can .</p>
-                                </div>
-                            </div>
-                            <!-- Analytics Content -->
-                            <main class="analytics-content">
-
-                            </main>
-                        </div>
-                    </div>
-
-                    <div class="home-section position-relative overflow-y-auto pt-3" id="option5-content">
                         <!-- Settings content -->
                         <div class="container-fluid min-vh-100 p-0">
                             <div class="container-fluid menu-header-container">
                                 <h4>Settings</h4>
                             </div>
+                            <!-- Face Recognition Header -->
+                            <div class="header">
+                                <div class="container-fluid p-0">
+                                    <p>Welcome to setting section. Here you can change your email, username and
+                                        password.
+                                    </p>
+                                </div>
+                            </div>
                             <!-- Settings Content -->
                             <main class="setting-content">
-
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="card">
+                                            <div class="container">
+                                                <div class="row">
+                                                    <div class="col-md-4">
+                                                        <div class="card-title">Change Email</div>
+                                                    </div>
+                                                    <div class="col-md-8">
+                                                        <div id="content3">
+                                                            <form>
+                                                                <div class="form-group">
+                                                                    <label for="email">New Email</label>
+                                                                    <input type="email" id="new-email"
+                                                                        class="form-control" required>
+                                                                </div>
+                                                                <div class="form-group">
+                                                                    <label for="password">Password</label>
+                                                                    <input type="password" id="current-password"
+                                                                        class="form-control" required>
+                                                                </div>
+                                                                <button type="click" id="new-email-btn"
+                                                                    class="btn mt-3 btn-block new-email-btn">Save</button>
+                                                            </form>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="card">
+                                            <div class="container">
+                                                <div class="row">
+                                                    <div class="col-md-4">
+                                                        <div class="card-title">Change Username</div>
+                                                    </div>
+                                                    <div class="col-md-8">
+                                                        <div id="content3">
+                                                            <form>
+                                                                <div class="form-group">
+                                                                    <label for="username">New Username</label>
+                                                                    <input type="text" id="new-username"
+                                                                        class="form-control" required>
+                                                                </div>
+                                                                <div class="form-group">
+                                                                    <label for="password">Password</label>
+                                                                    <input type="password" id="current-password2"
+                                                                        class="form-control" required>
+                                                                </div>
+                                                                <button type="submit" id="new-username-btn"
+                                                                    class="btn mt-3 btn-block new-username-btn">Save</button>
+                                                            </form>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="card">
+                                            <div class="container">
+                                                <div class="row">
+                                                    <div class="col-md-4">
+                                                        <div class="card-title">Change Password</div>
+                                                    </div>
+                                                    <div class="col-md-8">
+                                                        <div id="content3">
+                                                            <form>
+                                                                <div class="form-group">
+                                                                    <label for="current-password">Current
+                                                                        Password</label>
+                                                                    <input type="password" id="current-password3"
+                                                                        class="form-control" required>
+                                                                </div>
+                                                                <div class="form-group">
+                                                                    <label for="new-password">New Password</label>
+                                                                    <input type="password" id="new-password"
+                                                                        class="form-control" required>
+                                                                </div>
+                                                                <div class="form-group">
+                                                                    <label for="confirm-password">Confirm
+                                                                        Password</label>
+                                                                    <input type="password" id="confirm-password"
+                                                                        class="form-control" required>
+                                                                </div>
+                                                                <button type="submit" id="new-password-btn"
+                                                                    class="btn mt-3 btn-block new-password-btn">Save</button>
+                                                            </form>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             </main>
                         </div>
                     </div>
