@@ -62,6 +62,8 @@ options.forEach(function (option) {
 /*----------- for save, update and delete button ---------------*/
 
 const form1 = document.querySelector('#content1 form');
+const phoneInput = document.querySelector('#phone');
+const phoneError = document.querySelector('#phone-error');
 
 form1.addEventListener('submit', event => {
     event.preventDefault();
@@ -71,7 +73,7 @@ form1.addEventListener('submit', event => {
     const gender = document.querySelector('#gender').value;
     const dob = document.querySelector('#dob').value;
     const email = document.querySelector('#email').value;
-    const phone_num = document.querySelector('#phone').value;
+    const phone_num = phoneInput.value;
     const address = document.querySelector('#address').value;
     const department = document.querySelector('#department').value;
     const position = document.querySelector('#position').value;
@@ -79,6 +81,18 @@ form1.addEventListener('submit', event => {
 
     console.log(first_name)
     console.log(last_name)
+
+    // Validate phone number
+    const isValidPhoneNumber = validatePhoneNumber(phone_num);
+    if (!isValidPhoneNumber) {
+        phoneError.textContent = 'Phone number must be 10 digits long and contain only numbers.';
+        phoneInput.classList.add('is-invalid');
+        return;
+    }
+
+    // Clear the error message and invalid class if the phone number is valid
+    phoneError.textContent = '';
+    phoneInput.classList.remove('is-invalid');
 
     const data = {
         employee_id: employee_id,
@@ -102,6 +116,14 @@ form1.addEventListener('submit', event => {
         deleteEmployeeDetails(data);
     }
 });
+
+function validatePhoneNumber(phoneNumber) {
+    // Remove any non-digit characters from the phone number
+    const numericPhoneNumber = phoneNumber.replace(/\D/g, '');
+
+    // Check if the phone number is exactly 10 digits long
+    return numericPhoneNumber.length === 10;
+}
 
 
 function saveEmployeeDetails(data) {

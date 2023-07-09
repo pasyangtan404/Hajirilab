@@ -167,7 +167,7 @@ def train():
     pipeline = Pipeline([
         ('scaler', StandardScaler()),
         ('pca', PCA(n_components=0.95)),  # Retain 95% of the variance
-        ('svm', SVC())
+        ('svm', SVC(probability=True))
     ])
         
     # Define the parameter grid for hyperparameter tuning

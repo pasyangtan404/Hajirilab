@@ -76,6 +76,25 @@ def login():
         return jsonify({'success': True, 'user': result})
     else:
         return jsonify({'success': False, 'message': 'Invalid username or password'})
+    
+@app.route('/validate_email', methods=['POST'])
+def validate_email():
+    try:
+        print("next button clicked!")
+        data = request.get_json()
+
+        email = data.get('email')
+        
+        print(email)
+        
+        user = Users.query.first()
+        if user and email == user.email:
+            return jsonify({'valid': True})
+        else:
+            return jsonify({'valid': False})
+    
+    except Exception as e:
+        return jsonify({'error': str(e)})
 
 @app.route('/change_email', methods=['POST'])
 def change_email():

@@ -30,12 +30,21 @@ form1.addEventListener('submit', event => {
 
   const usernameInput = document.querySelector('#floatingUsername');
   const passwordInput = document.querySelector('#floatingPassword');
+  const loginErrorLabel = document.getElementById('login-show-error');
+
   let username = usernameInput.value;
   let password = passwordInput.value;
 
 
   console.log(username)
   console.log(password)
+
+  if (username.trim() === '' || password.trim() === '') {
+    loginErrorLabel.textContent = 'Username and password are required.';
+    usernameInput.value = '';
+    passwordInput.value = '';
+    return;
+  }
 
   const data = {
     username: username,
@@ -57,8 +66,11 @@ form1.addEventListener('submit', event => {
       if (result.success) {
         ipcRenderer.send('submit-login', body);
       } else {
-        const loginErrorLabel = document.getElementById('login-show-error');
-        loginErrorLabel.textContent = result.message;
+        if (result.message === 'Invalid username or password') {
+          loginErrorLabel.textContent = 'Invalid username or password.';
+        } else {
+          loginErrorLabel.textContent = result.message;
+        }
         usernameInput.value = '';
         passwordInput.value = '';
       }

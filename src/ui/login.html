@@ -93,13 +93,13 @@
                                 <h4 class="text-dark"><strong>Forgot Password</strong></h4>
                                 <p><small>Enter your email below.</small></p>
                             </div>
-                            <div class="forgot-pass-form">
+                            <div class="forgot-pass-form" id="content2">
                                 <form>
                                     <div class="form-group">
                                         <label class="email-show-error" id="email-show-error"></label>
                                         <div class="form-floating mb-3">
                                             <input type="email" class="form-control mt-2" id="forgot-pass-email"
-                                                placeholder="Email">
+                                                placeholder="Email" required>
                                             <label for="forgot-pass-email">Email</label>
                                         </div>
                                     </div>
@@ -109,10 +109,35 @@
                                 </form>
                             </div>
                         </div>
+
+                        <div class="row" id="codeContent" style="display: none;">
+                            <div class="code-header">
+                                <h4 class="text-dark"><strong>Enter 5-digit Code</strong></h4>
+                                <p><small>Enter the code sent to your email.</small></p>
+                            </div>
+                            <div class="code-form" id="content3">
+                                <form>
+                                    <div class="form-group">
+                                        <label class="code-show-error" id="code-show-error"></label>
+                                        <div class="form-floating mb-3">
+                                            <input type="text" id="digit1" maxlength="1" pattern="[0-9]" required>
+                                            <input type="text" id="digit2" maxlength="1" pattern="[0-9]" required>
+                                            <input type="text" id="digit3" maxlength="1" pattern="[0-9]" required>
+                                            <input type="text" id="digit4" maxlength="1" pattern="[0-9]" required>
+                                            <input type="text" id="digit5" maxlength="1" pattern="[0-9]" required>
+                                        </div>
+                                    </div>
+                                    <div class="next2-btn-container">
+                                        <button type="submit" id="next2-btn" class="btn btn-block next2-btn">Next</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
+        <script type="text/javascript" src="./js/show-code-content.js"></script>
         <script type="text/javascript" src="./js/forgot-password.js"></script>
         <script type="text/javascript" src="./js/login.js"></script>
 </body>
