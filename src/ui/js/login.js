@@ -144,7 +144,7 @@ form2.addEventListener('submit', event => {
         showCodeContent();
       } else {
         const emailErrorLabel = document.getElementById('email-show-error');
-        emailErrorLabel.textContent = 'Invalid Email';
+        emailErrorLabel.textContent = 'Please type your registered email.';
         emailInput.value = '';
       }
     })

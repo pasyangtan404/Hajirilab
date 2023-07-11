@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, request, send_file
+from flask import Flask, jsonify, request, session, send_file
 from flask_sqlalchemy import SQLAlchemy
 from flask_marshmallow import Marshmallow
 from marshmallow import Schema, fields
@@ -156,30 +156,6 @@ def verify_code():
 
     except Exception as e:
         return jsonify({'error': str(e)})
-
-@app.route('/change_email', methods=['POST'])
-def change_email():
-    try:   
-        data = request.get_json()
-        
-        new_email = data.get('email')
-        password = data.get('password')
-        
-        user = Users.query.first()
-        if user and password == user.password:
-            # Check if new email is different from the current email
-            if new_email != user.email:
-                # Update the email in the database
-                user.email = new_email
-                db.session.commit()
-                return jsonify({'message': 'Email updated successfully'})
-            else:
-                return jsonify({'error': 'New email must be different from current email'})
-        else:
-            return jsonify({'error': 'Invalid password'})
-
-    except Exception as e:
-        return jsonify({'error': str(e)})
     
 @app.route('/change_password', methods=['POST'])
 def change_password():
@@ -197,6 +173,88 @@ def change_password():
             return jsonify(success=True)
         else:
             return jsonify(success=False, error='Could not find user')
+
+    except Exception as e:
+        return jsonify({'error': str(e)})
+    
+@app.route('/change_email', methods=['POST'])
+def change_email():
+    try:   
+        data = request.get_json()
+        
+        new_email = data.get('newEmail')
+        password = data.get('password')
+        
+        # Check if the new email matches the email saved in the database
+        user = Users.query.filter_by(email=new_email).first()
+        if user:
+            return jsonify({'error': 'Please enter new email.'})
+
+        # Check if the current password matches the password in the database
+        user = Users.query.filter_by(password=password).first()
+        if not user:
+            return jsonify({'error': 'Wrong password.'})
+
+        # Update the email in the database
+        user.email = new_email
+        db.session.commit()
+
+        # Return the success message
+        return jsonify({'message': 'Email updated successfully.'})
+
+    except Exception as e:
+        return jsonify({'error': str(e)})
+    
+@app.route('/change_username', methods=['POST'])
+def change_username():
+    try:   
+        data = request.get_json()
+        
+        new_username = data.get('newUsername')
+        password = data.get('password')
+        
+        user = Users.query.filter_by(username=new_username).first()
+        if user:
+            return jsonify({'error': 'Please enter new username.'})
+
+        user = Users.query.filter_by(password=password).first()
+        if not user:
+            return jsonify({'error': 'Wrong password.'})
+
+        # Update the email in the database
+        user.username= new_username
+        db.session.commit()
+
+        # Return the success message
+        return jsonify({'message': 'Username updated successfully.'})
+
+    except Exception as e:
+        return jsonify({'error': str(e)})
+    
+@app.route('/new_password', methods=['POST'])
+def new_password():
+    try:   
+        data = request.get_json()
+        
+        username = data.get('username')
+        password = data.get('password')
+        new_password = data.get('newPassword')
+        
+        user = Users.query.filter_by(username=username).first()
+        if not user:
+            return jsonify({'error': 'Incorrect username.'})
+        
+        if user.password != password:
+            return jsonify({'error': 'Wrong password.'})
+        
+        if new_password == password:
+            return jsonify({'error': 'Please type a new password.'})
+        
+        user.password = new_password
+        db.session.commit()
+
+        # Return the success message
+        return jsonify({'message': 'Password changed successfully.'})
 
     except Exception as e:
         return jsonify({'error': str(e)})

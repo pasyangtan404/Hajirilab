@@ -524,17 +524,23 @@
                                                         <div class="change-email-form" id="content3">
                                                             <form>
                                                                 <div class="form-group">
-                                                                    <label for="email">New Email</label>
-                                                                    <input type="email" id="new-email"
-                                                                        class="form-control" required>
-                                                                </div>
-                                                                <div class="form-group">
-                                                                    <label for="password">Password</label>
-                                                                    <input type="password" id="current-password"
-                                                                        class="form-control" required>
+                                                                    <label class="new-email-show-error"
+                                                                        id="new-email-show-error"></label>
+                                                                    <div class="form-floating mb-3">
+                                                                        <input type="email" class="form-control mt-2"
+                                                                            id="new-email" placeholder="newEmail"
+                                                                            required>
+                                                                        <label for="FloatingEmail" class="labels">New Email</label>
+                                                                    </div>
+                                                                    <div class="form-floating mb-3">
+                                                                        <input type="password" class="form-control mt-2"
+                                                                            id="current-password" placeholder="Password1"
+                                                                            required>
+                                                                        <label for="FloatingPassword" class="labels">Password</label>
+                                                                    </div>
                                                                 </div>
                                                                 <button type="submit" id="new-email-btn"
-                                                                    class="btn mt-3 btn-block new-email-btn">Save</button>
+                                                                    class="btn btn-block new-email-btn">Save</button>
                                                             </form>
                                                         </div>
                                                     </div>
@@ -553,17 +559,23 @@
                                                         <div class="change-username-form" id="content4">
                                                             <form>
                                                                 <div class="form-group">
-                                                                    <label for="username">New Username</label>
-                                                                    <input type="text" id="new-username"
-                                                                        class="form-control" required>
-                                                                </div>
-                                                                <div class="form-group">
-                                                                    <label for="password">Password</label>
-                                                                    <input type="password" id="current-password2"
-                                                                        class="form-control" required>
+                                                                    <label class="new-username-show-error"
+                                                                    id="new-username-show-error"></label>
+                                                                    <div class="form-floating mb-3">
+                                                                        <input type="text" class="form-control mt-2"
+                                                                            id="new-username" placeholder="newUsername"
+                                                                            required>
+                                                                        <label for="FloatingNewUsername" class="labels">Username</label>
+                                                                    </div>
+                                                                    <div class="form-floating mb-3">
+                                                                        <input type="password" class="form-control mt-2"
+                                                                            id="current-password2" placeholder="Password2"
+                                                                            required>
+                                                                        <label for="FloatingPassword2" class="labels">Password</label>
+                                                                    </div>
                                                                 </div>
                                                                 <button type="submit" id="new-username-btn"
-                                                                    class="btn mt-3 btn-block new-username-btn">Save</button>
+                                                                    class="btn btn-block new-username-btn">Save</button>
                                                             </form>
                                                         </div>
                                                     </div>
@@ -584,24 +596,35 @@
                                                         <div class="change-password-form" id="content5">
                                                             <form>
                                                                 <div class="form-group">
-                                                                    <label for="current-password">Current
-                                                                        Password</label>
-                                                                    <input type="password" id="current-password3"
-                                                                        class="form-control" required>
-                                                                </div>
-                                                                <div class="form-group">
-                                                                    <label for="new-password">New Password</label>
-                                                                    <input type="password" id="new-password"
-                                                                        class="form-control" required>
-                                                                </div>
-                                                                <div class="form-group">
-                                                                    <label for="confirm-password">Confirm
-                                                                        Password</label>
-                                                                    <input type="password" id="confirm-password"
-                                                                        class="form-control" required>
+                                                                    <label class="change-pass-show-error"
+                                                                    id="change-pass-show-error"></label>
+                                                                    <div class="form-floating mb-3">
+                                                                        <input type="text" class="form-control mt-2"
+                                                                            id="current-username" placeholder="username"
+                                                                            required>
+                                                                        <label for="FloatingUsername" class="labels">Username</label>
+                                                                    </div>
+                                                                    <div class="form-floating mb-3">
+                                                                        <input type="password" class="form-control mt-2"
+                                                                            id="current-password3" placeholder="Password3"
+                                                                            required>
+                                                                        <label for="FloatingPassword3" class="labels">Password</label>
+                                                                    </div>
+                                                                    <div class="form-floating mb-3">
+                                                                        <input type="password" class="form-control mt-2"
+                                                                            id="new-password" placeholder="newPassword"
+                                                                            required>
+                                                                        <label for="FloatingNewPassword" class="labels">New Password</label>
+                                                                    </div>
+                                                                    <div class="form-floating mb-3">
+                                                                        <input type="password" class="form-control mt-2"
+                                                                            id="confirm-password" placeholder="confirmPassword"
+                                                                            required>
+                                                                        <label for="FloatingConfirmUsername" class="labels">Confirm Password</label>
+                                                                    </div>
                                                                 </div>
                                                                 <button type="submit" id="new-password-btn"
-                                                                    class="btn mt-3 btn-block new-password-btn">Save</button>
+                                                                    class="btn btn-block new-password-btn">Save</button>
                                                             </form>
                                                         </div>
                                                     </div>

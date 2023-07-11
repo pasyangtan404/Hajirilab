@@ -430,7 +430,7 @@ body {
     margin: 0 auto;
     border: none;
     background-color: #f9f9f9;
-    margin: 10px 7px 20px;
+    margin: 10px 7px 12px;
     box-shadow: 0px 0px 10px #ccc;
     border-radius: 5px;
     padding: 15px 25px;
@@ -453,3 +453,17 @@ body {
     margin-bottom: 20px;
     color: #6c757d;
 }
+
+.new-email-show-error,
+.new-username-show-error,
+.change-pass-show-error {
+    color: red;
+    font-weight: bold;
+}
+
+.change-email-form .form-control,
+.change-username-form .form-control,
+.change-password-form .form-control {
+    height: 45px;
+}
+

@@ -23,7 +23,6 @@ document.getElementById('log-out').addEventListener('click', () => {
 /*--------- for sidebar and content change ------------*/
 let sidebar = document.querySelector(".sidebar");
 let closeBtn = document.querySelector("#btn");
-let selectedOption = localStorage.getItem('selecteOption');
 
 closeBtn.addEventListener("click", () => {
     sidebar.classList.toggle("open");
@@ -569,23 +568,23 @@ function updateFormFields(row) {
 function convertDateFormat(date) {
     var parts = date.split('/');
     if (parts.length !== 3) {
-      return date; // Return the original date if it doesn't have the expected format
+        return date; // Return the original date if it doesn't have the expected format
     }
-  
+
     var year = parts[2];
     var month = parts[0];
     var day = parts[1];
-  
+
     if (month.length === 1) {
-      month = '0' + month;
+        month = '0' + month;
     }
-  
+
     if (day.length === 1) {
-      day = '0' + day;
+        day = '0' + day;
     }
-  
+
     return year + '-' + month + '-' + day;
-  }
+}
 
 function convertTimeFormat(time) {
     // Split the time into hours, minutes, and seconds
@@ -735,40 +734,111 @@ resetButton2.addEventListener('click', event => {
     form2.reset();
 });
 
-const saveButton = document.querySelector('#new-email-btn');
-saveButton.addEventListener('click', event => {
-    event.preventDefault();
-    const email = document.querySelector('#email').value;
-    const password = document.querySelector('#password').value;
+const form3 = document.querySelector('#content3 form');
 
-    console.log(email);
-    console.log(password);
+form3.addEventListener('submit', event => {
+    event.preventDefault();
+    const newEmail = document.querySelector('#new-email').value;
+    const password = document.querySelector('#current-password').value;
 
     const data = {
-        email: email,
-        password: password,
-    };
+        newEmail: newEmail,
+        password: password
+    }
 
     fetch('http://127.0.0.1:5000/change_email', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data)
     })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error(`HTTP ${response.status} ${response.statusText}`);
-            }
-            return response.json();
-        })
-        .then(response => {
-            if (response.error) {
-                alert(response.error);
+        .then(response => response.json())
+        .then(data => {
+            if (data.error) {
+                const newEmailErrorLabel = document.getElementById('new-email-show-error');
+                newEmailErrorLabel.textContent = data.error;
+                form3.reset();
             } else {
-                alert(response.message);
+                console.log(data.message);
+                alert(data.message)
             }
         })
         .catch(error => {
             console.error(error);
-            alert('An error occurred while processing the request');
+        });
+});
+
+const form4 = document.querySelector('#content4 form');
+
+form4.addEventListener('submit', event => {
+    event.preventDefault();
+    const newUsername = document.querySelector('#new-username').value;
+    const password = document.querySelector('#current-password2').value;
+
+    const data = {
+        newUsername: newUsername,
+        password: password
+    }
+
+    fetch('http://127.0.0.1:5000/change_username', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+    })
+        .then(response => response.json())
+        .then(data => {
+            if (data.error) {
+                const newUsernameErrorLabel = document.getElementById('new-username-show-error');
+                newUsernameErrorLabel.textContent = data.error;
+                form4.reset();
+            } else {
+                console.log(data.message);
+                alert(data.message)
+            }
+        })
+        .catch(error => {
+            console.error(error);
+        });
+});
+
+const form5 = document.querySelector('#content5 form');
+
+form5.addEventListener('submit', event => {
+    event.preventDefault();
+    const currentUsername = document.querySelector('#current-username').value;
+    const password = document.querySelector('#current-password3').value;
+    const newPassword = document.querySelector('#new-password').value;
+    const confirmPassword = document.querySelector('#confirm-password').value;
+
+    if (newPassword !== confirmPassword) {
+        const newPassErrorLabel = document.getElementById('change-pass-show-error');
+        newPassErrorLabel.textContent = 'Passwords do not match';
+        form5.reset();
+        return;
+    }
+
+    const data = {
+        username: currentUsername,
+        password: password,
+        newPassword: newPassword
+    }
+
+    fetch('http://127.0.0.1:5000/new_password', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+    })
+        .then(response => response.json())
+        .then(data => {
+            if (data.error) {
+                const newPassErrorLabel = document.getElementById('change-pass-show-error');
+                newPassErrorLabel.textContent = data.error;
+                // form5.reset();
+            } else {
+                console.log(data.message);
+                alert(data.message)
+            }
+        })
+        .catch(error => {
+            console.error(error);
         });
 });
