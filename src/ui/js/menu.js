@@ -72,10 +72,32 @@ options.forEach(function (option) {
 });
 
 /*----------- for save, update and delete button ---------------*/
+const modal = document.getElementById('modal');
+const closeModalBtn = document.getElementsByClassName('close')[0];
+const okBtn = document.getElementById('ok-btn');
+const modalTitle = document.getElementById('modalTitle');
+const modalBody = document.getElementById('modalBody');
+
+// Function to open the modal with a custom message
+function showModal(message) {
+  modalTitle.textContent = 'Hajirilab';
+  modalBody.textContent = message;
+  modal.style.display = 'block';
+}
+
+// Close modal when close icon is clicked
+closeModalBtn.addEventListener('click', function() {
+  modal.style.display = 'none';
+});
+
+// Close modal when OK button is clicked
+okBtn.addEventListener('click', function() {
+  modal.style.display = 'none';
+});
 
 const form1 = document.querySelector('#content1 form');
 const phoneInput = document.querySelector('#phone');
-const phoneError = document.querySelector('#phone-error');
+
 
 form1.addEventListener('submit', event => {
     event.preventDefault();
@@ -157,14 +179,14 @@ function saveEmployeeDetails(data) {
         .then(data => {
             console.log(data);
             if (data.message === 'Employee details saved successfully') {
-                alert('Employee details saved successfully');
+                showModal('Employee details saved successfully');
             } else if (data.message === 'Employee details already exist') {
-                alert('Employee details already exist');
+                showModal('Employee details already exist');
             }
         })
         .catch(error => {
             console.error(error);
-            alert('An error occurred while saving employee details');
+            showModal('An error occurred while saving employee details');
         });
 }
 

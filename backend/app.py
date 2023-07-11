@@ -563,7 +563,7 @@ def checkIn_Attendance():
                 predicted_label, confidence = recognize_face(preprocessed_face)
                 employee = Emp_details.query.filter_by(employee_id=predicted_label).first()
 
-                if confidence[0] >= 0.77:
+                if confidence[0] >= 0.80:
                     # Face recognized
                     attendance_status = 'Present'
                     color = (0, 255, 0)  # Green frame
