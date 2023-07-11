@@ -36,6 +36,10 @@ attendance_recorded = False
 # Create a set to store recorded employee IDs
 recorded_employee_ids = set()
 
+def generate_verification_code():
+    code = random.randint(10000, 99999)
+    return str(code)
+
 def extract_faces(img):
     face_detector = cv2.CascadeClassifier(face_file_path)
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)

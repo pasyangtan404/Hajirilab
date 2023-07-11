@@ -95,13 +95,17 @@ body {
 }
 
 .login-header,
-.forgot-pass-header {
+.forgot-pass-header,
+.code-header,
+.changePass-header {
     margin-top: 110px;
     margin-left: 35px;
 }
 
 .login-form,
-.forgot-pass-form {
+.forgot-pass-form,
+.code-form,
+.new-pass-form {
     margin-left: 35px;
 }
 
@@ -114,12 +118,15 @@ body {
 }
 
 .login-show-error,
-.email-show-error {
+.email-show-error,
+.code-show-error {
     color: red;
     font-weight: bold;
 }
 
-.login-toggle-password-icon {
+.login-toggle-password-icon,
+.new-pass-toggle-icon,
+.confirm-pass-toggle-icon {
     top: 20px;
     right: 15px;
     position: absolute;
@@ -133,7 +140,9 @@ a {
 }
 
 .login-btn,
-.next-btn {
+.send-code-btn,
+.next-btn,
+.save-password-btn {
     border-radius: 10px;
     background-color: #6495ED;
     color: #fff;
@@ -141,11 +150,33 @@ a {
     line-height: 2;
 }
 
-.next-btn-container {
+.send-code-container,
+.next-btn-container,
+.save-btn-container {
     margin: 30px 0 0 110px;
 }
 
 .login-btn:hover,
-.next-btn:hover {
+.next-btn:hover,
+.send-code-btn:hover,
+.save-password-btn:hover {
     background-color: #6495ED;
+}
+
+.back-container {
+    display: flex;
+    align-items: center;
+    margin-top: 20px ;
+    cursor: pointer;
+}
+
+.back-icon {
+    font-size: 18px;
+    margin-right: 5px;
+}
+
+.back-label {
+    font-size: 14px;
+    font-weight: bold;
+    color: black;
 }

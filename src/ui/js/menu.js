@@ -23,6 +23,7 @@ document.getElementById('log-out').addEventListener('click', () => {
 /*--------- for sidebar and content change ------------*/
 let sidebar = document.querySelector(".sidebar");
 let closeBtn = document.querySelector("#btn");
+let selectedOption = localStorage.getItem('selecteOption');
 
 closeBtn.addEventListener("click", () => {
     sidebar.classList.toggle("open");
@@ -44,6 +45,16 @@ function changeContent(selectedOption) {
     var selectedDiv = document.querySelector('#' + selectedOption + '-content');
     console.log(selectedDiv);
     selectedDiv.style.display = 'block';
+
+    localStorage.setItem('selectedOption', selectedOption);
+}
+
+var storedOption = localStorage.getItem('selectedOption');
+
+// Check if a stored option exists and if it matches a valid option
+if (storedOption && document.querySelector('.option[data-value="' + storedOption + '"]')) {
+    // Call the changeContent function with the stored option
+    changeContent(storedOption);
 }
 
 // Attach event listeners to options in sidebar
@@ -56,6 +67,8 @@ options.forEach(function (option) {
 
         // Call the changeContent function with the selected option
         changeContent(selectedOption);
+
+        localStorage.setItem('selectedOption', selectedOption);
     });
 });
 
@@ -82,17 +95,21 @@ form1.addEventListener('submit', event => {
     console.log(first_name)
     console.log(last_name)
 
-    // Validate phone number
-    const isValidPhoneNumber = validatePhoneNumber(phone_num);
-    if (!isValidPhoneNumber) {
-        phoneError.textContent = 'Phone number must be 10 digits long and contain only numbers.';
-        phoneInput.classList.add('is-invalid');
-        return;
-    }
+    // const numericValue = phone_num.replace(/\D/g, '');
 
-    // Clear the error message and invalid class if the phone number is valid
-    phoneError.textContent = '';
-    phoneInput.classList.remove('is-invalid');
+    // event.target.value = numericValue;
+
+    // // Validate phone number
+    // const isValidPhoneNumber = validatePhoneNumber(phone_num);
+    // if (!isValidPhoneNumber) {
+    //     phoneError.textContent = 'Phone number must be 10 digits long and contain only numbers.';
+    //     phoneInput.classList.add('is-invalid');
+    //     return;
+    // }
+
+    // // Clear the error message and invalid class if the phone number is valid
+    // phoneError.textContent = '';
+    // phoneInput.classList.remove('is-invalid');
 
     const data = {
         employee_id: employee_id,
@@ -117,13 +134,13 @@ form1.addEventListener('submit', event => {
     }
 });
 
-function validatePhoneNumber(phoneNumber) {
-    // Remove any non-digit characters from the phone number
-    const numericPhoneNumber = phoneNumber.replace(/\D/g, '');
+// function validatePhoneNumber(phoneNumber) {
+//     // Remove any non-digit characters from the phone number
+//     const numericPhoneNumber = phoneNumber.replace(/\D/g, '');
 
-    // Check if the phone number is exactly 10 digits long
-    return numericPhoneNumber.length === 10;
-}
+//     // Check if the phone number is exactly 10 digits long
+//     return numericPhoneNumber.length === 10;
+// }
 
 
 function saveEmployeeDetails(data) {
@@ -207,7 +224,7 @@ const resetButton1 = document.querySelector('#reset-btn');
 
 resetButton1.addEventListener('click', event => {
     event.preventDefault();
-    
+
     const form1 = document.querySelector('#content1 form');
     form1.reset();
 });
@@ -513,8 +530,8 @@ function updateTable(data) {
 
     data.forEach(row => {
         var tableRow = document.createElement('tr');
-        tableRow.addEventListener('click', () => {
-            updateFormFields(row);
+        tableRow.addEventListener('click', function () {
+            updateFormFields(this); // Pass the clicked row to updateFormFields function
         });
 
         columnOrder.forEach(column => {
@@ -528,17 +545,47 @@ function updateTable(data) {
 }
 
 function updateFormFields(row) {
-    // Update the form fields with the imported data
-    document.querySelector('#att-employee-id').value = row['Employee ID'];
-    document.querySelector('#att-first-name').value = row['First Name'];
-    document.querySelector('#att-last-name').value = row['Last Name'];
-    document.querySelector('#att-department').value = row['Department'];
-    document.querySelector('#check-in').value = convertTimeFormat(row['Check-In']);
-    var checkOutValue = row['Check-Out'];
-    document.querySelector('#check-out').value = checkOutValue === 'N/A' ? 'N/A' : convertTimeFormat(checkOutValue);
-    document.querySelector('#attdate').value = row['Date'];
-    document.querySelector('#att-status').value = row['Attendance Status'];
+    // Get the data from the selected table row
+    var employeeId = row.cells[0].textContent;
+    var firstName = row.cells[1].textContent;
+    var lastName = row.cells[2].textContent;
+    var department = row.cells[3].textContent;
+    var date = row.cells[4].textContent;
+    var checkIn = row.cells[5].textContent;
+    var checkOut = row.cells[6].textContent;
+    var status = row.cells[7].textContent;
+
+    // Update the form fields with the retrieved data
+    document.querySelector('#att-employee-id').value = employeeId;
+    document.querySelector('#att-first-name').value = firstName;
+    document.querySelector('#att-last-name').value = lastName;
+    document.querySelector('#att-department').value = department;
+    document.querySelector('#check-in').value = convertTimeFormat(checkIn);
+    document.querySelector('#check-out').value = checkOut === 'N/A' ? 'N/A' : convertTimeFormat(checkOut);
+    document.querySelector('#attdate').value = convertDateFormat(date);
+    document.querySelector('#att-status').value = status;
 }
+
+function convertDateFormat(date) {
+    var parts = date.split('/');
+    if (parts.length !== 3) {
+      return date; // Return the original date if it doesn't have the expected format
+    }
+  
+    var year = parts[2];
+    var month = parts[0];
+    var day = parts[1];
+  
+    if (month.length === 1) {
+      month = '0' + month;
+    }
+  
+    if (day.length === 1) {
+      day = '0' + day;
+    }
+  
+    return year + '-' + month + '-' + day;
+  }
 
 function convertTimeFormat(time) {
     // Split the time into hours, minutes, and seconds
@@ -559,49 +606,73 @@ function convertTimeFormat(time) {
     return formattedTime;
 }
 
-function updateDetails() {
-    // Get the updated details from the form
-    var employeeId = document.querySelector('#employee-id').value;
-    var firstName = document.querySelector('#first-name').value;
-    var lastName = document.querySelector('#last-name').value;
+document.getElementById('import-btn').addEventListener('click', event => {
+    event.preventDefault();
+    importCSV();
+});
+
+const updateBtn = document.querySelector('#att-update-btn');
+updateBtn.addEventListener('click', event => {
+    event.preventDefault();
+    // Get the updated values from the form fields
+    var employeeId = document.querySelector('#att-employee-id').value;
+    var firstName = document.querySelector('#att-first-name').value;
+    var lastName = document.querySelector('#att-last-name').value;
     var department = document.querySelector('#att-department').value;
-    var checkIn = document.querySelector('#check-in').value
-    var checkOut = document.querySelector('#check-out').value
-    var date = document.querySelector('#attdate').value
-    var status = document.querySelector('#att-status').value
+    var checkIn = document.querySelector('#check-in').value;
+    var checkOut = document.querySelector('#check-out').value;
+    var date = document.querySelector('#attdate').value;
+    var status = document.querySelector('#att-status').value;
 
-    var updatedRow = {
-        'Employee ID': employeeId,
-        'First Name': firstName,
-        'Last Name': lastName,
-        'Department': department,
-        'Date': date,
-        'Check-In': checkIn,
-        'Check-Out': checkOut === 'N/A' ? 'N/A' : convertTimeTo24HourFormat(checkOut),
-        'Attendance Status': status
-    };
+    checkIn = convertTimeTo24HourFormat(checkIn);
+    checkOut = checkOut === 'N/A' ? 'N/A' : convertTimeTo24HourFormat(checkOut);
 
-    fetch('http://127.0.0.1:5000/update_row', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ 'row': updatedRow })
-    })
-        .then(response => response.json())
-        .then(data => {
-            if (data.error) {
-                console.error(data.error);
-            } else {
-                console.log(data.message);
-                // Update the table with the new row data
-                updateTable(data.data);
-            }
-        })
-        .catch(error => {
-            console.error(error);
-        });
-}
+    // Find the selected table row based on the Employee ID
+    var table = document.getElementById('attendance-table');
+    var rows = table.getElementsByTagName('tr');
+
+    var updated = false;
+    var selectedRow = null;
+
+    for (var i = 0; i < rows.length; i++) {
+        var row = rows[i];
+        var rowEmployeeId = row.cells[0].textContent;
+
+        if (rowEmployeeId === employeeId) {
+            // Update the values in the table row
+            row.cells[1].textContent = firstName;
+            row.cells[2].textContent = lastName;
+            row.cells[3].textContent = department;
+            row.cells[4].textContent = date;
+            row.cells[5].textContent = checkIn;
+            row.cells[6].textContent = checkOut;
+            row.cells[7].textContent = status;
+
+            updated = true;
+            selectedRow = row;
+            break;
+        }
+    }
+
+    // Clear the form fields
+    document.querySelector('#att-employee-id').value = '';
+    document.querySelector('#att-first-name').value = '';
+    document.querySelector('#att-last-name').value = '';
+    document.querySelector('#att-department').value = '';
+    document.querySelector('#check-in').value = '';
+    document.querySelector('#check-out').value = '';
+    document.querySelector('#attdate').value = '';
+    document.querySelector('#att-status').value = '';
+
+    if (updated) {
+        if (selectedRow) {
+            selectedRow.classList.remove('selected');
+        }
+        alert('Table updated successfully');
+    } else {
+        alert('Error updating table');
+    }
+})
 
 function convertTimeTo24HourFormat(time) {
     var [formattedTime, period] = time.split(' ');
@@ -614,21 +685,52 @@ function convertTimeTo24HourFormat(time) {
     return hours + ':' + minutes;
 }
 
-document.getElementById('import-btn').addEventListener('click', event => {
+const exportBtn = document.querySelector('#export-btn');
+exportBtn.addEventListener('click', event => {
     event.preventDefault();
-    importCSV();
-});
 
-document.querySelector('#att-update-button').addEventListener('click', event => {
-    event.preventDefault();
-    updateDetails();
-});
+    const tableRows = Array.from(document.querySelectorAll('#attendance-table tbody tr'));
 
+    var columnOrder = ['Employee ID', 'First Name', 'Last Name', 'Department', 'Date', 'Check-In', 'Check-Out', 'Attendance Status'];
 
-const resetButton2 = document.querySelector('#att-reset-button');
+    const tableData = tableRows.map(row => {
+        const rowData = {};
+        Array.from(row.cells).forEach((cell, index) => {
+            const column = columnOrder[index];
+            rowData[column] = cell.textContent;
+        });
+        return rowData;
+    });
+
+    const data = {
+        tableData: tableData
+    };
+
+    fetch('http://127.0.0.1:5000/export_csv', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+    })
+        .then(response => response.blob())
+        .then(blob => {
+            // Create a download link for the CSV file
+            const url = window.URL.createObjectURL(new Blob([blob]));
+            const link = document.createElement('a');
+            link.href = url;
+            link.setAttribute('download', 'updated_attendance.csv');
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        })
+        .catch(error => {
+            console.error(error);
+        });
+})
+
+const resetButton2 = document.querySelector('#att-reset-btn');
 resetButton2.addEventListener('click', event => {
     event.preventDefault();
-    
+
     const form2 = document.querySelector('#content2 form');
     form2.reset();
 });

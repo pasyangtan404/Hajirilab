@@ -45,11 +45,11 @@ ipcMain.on('show-forgot-password', () => {
     mainWindow.webContents.send('show-forgot-password');
 });
 
-ipcMain.on('email-validated', (email) => {
-    const mainWindow = BrowserWindow.getFocusedWindow();
+// ipcMain.on('email-validated', (email) => {
+//     const mainWindow = BrowserWindow.getFocusedWindow();
 
-    mainWindow.webContents.send('show-code-content', email);
-});
+//     mainWindow.webContents.send('show-code-content', email);
+// });
 
 ipcMain.on('submit-login', (event, data) => {
     console.log('Received login data:', data);

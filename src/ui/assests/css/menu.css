@@ -288,6 +288,7 @@ body {
     font-size: medium;
     font-weight: 400;
 }
+
 .card {
     transition: all .3s ease-in-out;
 }
@@ -387,6 +388,11 @@ body {
 .table-responsive {
     overflow-y: auto;
     max-height: 65vh
+}
+
+.att-table {
+    overflow-y: auto;
+    height: 46vh;
 }
 
 .table th {

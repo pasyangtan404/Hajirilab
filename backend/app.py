@@ -1,23 +1,36 @@
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, send_file
 from flask_sqlalchemy import SQLAlchemy
 from flask_marshmallow import Marshmallow
 from marshmallow import Schema, fields
 from flask_cors import CORS
+from flask_mail import Mail, Message
 from datetime import datetime
-from helpers import extract_faces, get_eyes, preprocess_face, draw_frame, data_augmentation,train_model, recognize_face
+from helpers import generate_verification_code, extract_faces, get_eyes, preprocess_face, draw_frame, data_augmentation,train_model, recognize_face
 import os
 import cv2
 import time
 import csv
 import pandas as pd
+import io
+
 
 app = Flask(__name__)
 CORS(app)
 
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://root:''@localhost/hajirilabdb'
+app.config['SECRET_KEY'] = 'gky6vswlW2brKOWPJ8kE84Qw9dxYREBt'
+app.config['MAIL_SERVER'] = 'smtp.gmail.com'
+app.config['MAIL_PORT'] = 587
+app.config['MAIL_USE_TLS'] = True
+app.config['MAIL_USERNAME'] = 'hajirilab123@gmail.com'
+app.config['MAIL_PASSWORD'] = 'gkwhjzodojqlgnyr'
 
 db = SQLAlchemy(app)
 ma = Marshmallow(app)
+mail = Mail(app)
+
+# Get the directory of the app.py file
+current_dir = os.path.dirname(os.path.abspath(__file__))
 
 # Set the parameters for HOG and LBP feature extraction
 blockSize = (8, 8)
@@ -28,9 +41,6 @@ neighbors = 8
     
 #### Initializing VideoCapture object to access WebCam
 cap = cv2.VideoCapture(0)
-
-# Get the directory of the app.py file
-current_dir = os.path.dirname(os.path.abspath(__file__))
     
 # Specify the data folder path relative to the current directory
 data_folder = os.path.join(current_dir, '../face_data')
@@ -87,12 +97,63 @@ def validate_email():
         
         print(email)
         
-        user = Users.query.first()
-        if user and email == user.email:
+        user = Users.query.filter_by(email=email).first()
+        if user:
             return jsonify({'valid': True})
         else:
             return jsonify({'valid': False})
+    except Exception as e:
+        return jsonify({'error': str(e)})
+
+verification_codes = {}
+  
+@app.route('/send_code', methods=['POST'])
+def send_verification_code():
+    try:
+        data = request.get_json()
+        email = data.get('email')
+        user = Users.query.filter_by(email=email).first()
+
+        if user:
+            verification_code = generate_verification_code()
+            print(verification_code)
+            send_verification_email(email, verification_code)
+            verification_codes[email] = verification_code
+            print(verification_codes[email])
+
+            return jsonify(success=True)
+        else:
+            return jsonify(success=False, error='Could not send verification code')
+        
+    except Exception as e:
+        return jsonify({'error': str(e)})
+
+def send_verification_email(email, verification_code):
+    subject = 'Verification Code'
+    body = f'Your verification code is: {verification_code}'
+    sender = 'hajirilab123@gmail.com'
+    recipient = email
+
+    msg = Message(subject=subject, body=body, sender=sender, recipients=[recipient])
+    mail.send(msg)
     
+@app.route('/verify_code', methods=['POST'])
+def verify_code():
+    try:
+        data = request.get_json()
+        code = data.get('code')
+        email = data.get('email')
+        print(code)
+
+        # Get the stored verification code from the session
+        stored_code = verification_codes.get(email)
+        print(stored_code)
+        
+        if code == stored_code:
+            return jsonify(success=True)
+        else:
+            return jsonify(success=False, error='Invalid verification code')
+
     except Exception as e:
         return jsonify({'error': str(e)})
 
@@ -116,6 +177,26 @@ def change_email():
                 return jsonify({'error': 'New email must be different from current email'})
         else:
             return jsonify({'error': 'Invalid password'})
+
+    except Exception as e:
+        return jsonify({'error': str(e)})
+    
+@app.route('/change_password', methods=['POST'])
+def change_password():
+    try:
+        data = request.get_json()
+        email = data.get('email')
+        password = data.get('password')
+
+        user = Users.query.filter_by(email=email).first()
+
+        if user:
+            # Update the password in the database
+            user.password = password
+            db.session.commit()
+            return jsonify(success=True)
+        else:
+            return jsonify(success=False, error='Could not find user')
 
     except Exception as e:
         return jsonify({'error': str(e)})
@@ -621,19 +702,29 @@ def importCSV():
 
     except Exception as e:
         return jsonify({'error': str(e)})
-  
-@app.route('/update_row', methods=['POST'])
-def updateCSV():
+    
+@app.route('/export_csv', methods=['POST'])
+def exportCSV():
     try:
-        updated_row = request.json
+        data = request.get_json()
+        tableData = data.get('tableData')
+        
+        df = pd.DataFrame(tableData)
+        csv_data = df.to_csv(index=False)
+        
+        current_date = datetime.now().strftime('%Y-%m-%d')
+        filename = f'updated_{current_date}.csv'
+        
+        file_object = io.BytesIO(csv_data.encode('utf-8'))
+        file_object.seek(0)
 
-       # Update the row in the data list based on Employee ID
-        for i, row in enumerate(data):
-            if row['Employee ID'] == updated_row['Employee ID']:
-                data[i] = updated_row
-                break
-
-        return jsonify({'message': 'Row updated successfully'})
+        # Create a response with the CSV data
+        return send_file(
+            file_object,
+            mimetype='text/csv',
+            as_attachment=True,
+            download_name=filename
+        )
 
     except Exception as e:
         return jsonify({'error': str(e)})
