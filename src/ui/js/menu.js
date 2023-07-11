@@ -16,8 +16,38 @@ document.getElementById('menu-close-btn').addEventListener('click', () => {
     ipcRenderer.send('close-window');
 })
 
+const modal4 = document.getElementById('modal4');
+const closeModalBtn4 = document.getElementById('closeModal2');
+const yesBtn2 = document.getElementById('yes-btn2');
+const noBtn2 = document.getElementById('no-btn2');
+const modalTitle4 = document.getElementById('modalTitle4');
+const modalBody4 = document.getElementById('modalBody4');
+
+function showModal4(message) {
+    modalTitle4.textContent = 'HajiriLab';
+    modalBody4.textContent = message;
+    modal4.style.display = 'block';
+}
+
+closeModalBtn4.addEventListener('click', function () {
+    modal4.style.display = 'none';
+});
+
+noBtn2.addEventListener('click', function () {
+    modal4.style.display = 'none';
+});
+
+function confirmLogout(data) {
+    showModal4('Are you sure you want to logout?');
+
+    yesBtn2.addEventListener('click', function () {
+        ipcRenderer.send('logout');
+        modal4.style.display = 'none'
+    });
+}
+
 document.getElementById('log-out').addEventListener('click', () => {
-    ipcRenderer.send('logout');
+    confirmLogout();
 });
 
 /*--------- for sidebar and content change ------------*/
@@ -78,21 +108,61 @@ const okBtn = document.getElementById('ok-btn');
 const modalTitle = document.getElementById('modalTitle');
 const modalBody = document.getElementById('modalBody');
 
+const modal2 = document.getElementById('modal2');
+const closeModalBtn2 = document.getElementById('closeModal');
+const yesBtn = document.getElementById('yes-btn');
+const noBtn = document.getElementById('no-btn');
+const modalTitle2 = document.getElementById('modalTitle2');
+const modalBody2 = document.getElementById('modalBody2');
+
+const modal3 = document.getElementById('modal3');
+const closeModalBtn3 = document.getElementById('closeModal1');
+const yesBtn1 = document.getElementById('yes-btn1');
+const noBtn1 = document.getElementById('no-btn1');
+const modalTitle3 = document.getElementById('modalTitle3');
+const modalBody3 = document.getElementById('modalBody2');
+
 // Function to open the modal with a custom message
 function showModal(message) {
-  modalTitle.textContent = 'Hajirilab';
-  modalBody.textContent = message;
-  modal.style.display = 'block';
+    modalTitle.textContent = 'HajiriLab';
+    modalBody.textContent = message;
+    modal.style.display = 'block';
 }
 
-// Close modal when close icon is clicked
-closeModalBtn.addEventListener('click', function() {
-  modal.style.display = 'none';
+function showModal2(message) {
+    modalTitle2.textContent = 'HajiriLab';
+    modalBody2.textContent = message;
+    modal2.style.display = 'block';
+}
+
+function showModal3(message) {
+    modalTitle2.textContent = 'HajiriLab';
+    modalBody3.textContent = message;
+    modal3.style.display = 'block';
+}
+
+closeModalBtn.addEventListener('click', function () {
+    modal.style.display = 'none';
 });
 
-// Close modal when OK button is clicked
-okBtn.addEventListener('click', function() {
-  modal.style.display = 'none';
+closeModalBtn2.addEventListener('click', function () {
+    modal2.style.display = 'none';
+});
+
+closeModalBtn3.addEventListener('click', function () {
+    modal3.style.display = 'none';
+});
+
+okBtn.addEventListener('click', function () {
+    modal.style.display = 'none';
+});
+
+noBtn.addEventListener('click', function () {
+    modal2.style.display = 'none';
+});
+
+noBtn1.addEventListener('click', function () {
+    modal3.style.display = 'none';
 });
 
 const form1 = document.querySelector('#content1 form');
@@ -149,9 +219,9 @@ form1.addEventListener('submit', event => {
     if (event.submitter.id === 'save-btn') {
         saveEmployeeDetails(data);
     } else if (event.submitter.id === 'update-btn') {
-        updateEmployeeDetails(data);
+        confirmUpdate(data)
     } else if (event.submitter.id === 'delete-btn') {
-        deleteEmployeeDetails(data);
+        confirmDelete(data)
     }
 });
 
@@ -180,8 +250,10 @@ function saveEmployeeDetails(data) {
             console.log(data);
             if (data.message === 'Employee details saved successfully') {
                 showModal('Employee details saved successfully');
+                location.reload();
             } else if (data.message === 'Employee details already exist') {
                 showModal('Employee details already exist');
+                location.reload();
             }
         })
         .catch(error => {
@@ -207,17 +279,28 @@ function updateEmployeeDetails(data) {
         .then(data => {
             console.log(data);
             if (data.updated === true) {
-                alert('Employee details updated successfully');
+                showModal('Employee details updated successfully');
+                location.reload();
             } else if (data.updated === false) {
-                alert('No changes made');
+                showModal('No changes made');
             } else {
-                alert('An error occurred while updating employee details');
+                showModal('An error occurred while updating employee details');
+                location.reload();
             }
         })
         .catch(error => {
             console.error(error);
-            alert('An error occurred while updating employee details');
+            showModal('An error occurred while updating employee details');
         });
+}
+
+function confirmUpdate(data) {
+    showModal2('Are you sure you want to update this employee?');
+
+    yesBtn.addEventListener('click', function () {
+        updateEmployeeDetails(data);
+        modal2.style.display = 'none'
+    });
 }
 
 function deleteEmployeeDetails(data) {
@@ -233,13 +316,24 @@ function deleteEmployeeDetails(data) {
         })
         .then(data => {
             console.log(data);
-            alert('Employee details deleted successfully');
+            showModal('Employee details deleted successfully');
+            location.reload();
         })
         .catch(error => {
             console.error(error);
-            alert('An error occurred while deleting employee details');
+            showModal('An error occurred while deleting employee details');
         });
 }
+
+function confirmDelete(data) {
+    showModal3('Are you sure you want to delete this employee?');
+  
+    // Add event listener to Yes button in the update/delete modal
+    yesBtn1.addEventListener('click', function() {
+        deleteEmployeeDetails(data);
+        modal3.style.display = 'none'
+    });
+  }
 
 const resetButton1 = document.querySelector('#reset-btn');
 
@@ -278,11 +372,13 @@ function capturePhotos() {
         })
         .then(data => {
             console.log(data);
-            alert('Photos captured and preprocessed successfully');
+            showModal('Photos captured and preprocessed successfully');
+            location.reload();
         })
         .catch(error => {
             console.error(error);
-            alert('An error occurred while capturing and preprocessing photos');
+            showModal('An error occurred while capturing and preprocessing photos');
+            location.reload();
         });
 }
 
@@ -330,7 +426,8 @@ function populateTable() {
         })
         .catch(error => {
             console.error(error);
-            alert('An error occurred while fetching employee details');
+            showModal('An error occurred while fetching employee details');
+            location.reload();
         });
 }
 
@@ -367,9 +464,11 @@ trainButton.addEventListener('click', event => {
             // Handle the response from the server
             console.log(data);
             if (data.success) {
-                alert('Model trained successfully!');
+                showModal('Model trained successfully!');
+                location.reload();
             } else {
-                alert('An error occurred during training.');
+                showModal('An error occurred during training.');
+                location.reload();
             }
         })
         .catch(error => {
@@ -393,7 +492,8 @@ function check_In() {
         })
         .then(data => {
             console.log(data);
-            alert('Attendance taken successfully');
+            showModal('Attendance taken successfully');
+            location.reload();
         })
         .catch(error => {
             console.error(error);
@@ -422,9 +522,11 @@ function check_Out() {
         .then(data => {
             console.log(data);
             if (data.message === 'CSV file not found') {
-                alert('CSV file not found');
+                showModal('CSV file not found');
+                location.reload();
             } else if (data.message === 'Check-out successful') {
-                alert('Check-out successful');
+                showModal('Check-out successful');
+                location.reload();
             }
         })
         .catch(error => {
@@ -468,7 +570,7 @@ function showPhotos() {
         })
         .catch(error => {
             console.error(error);
-            alert('An error occurred while opening the folder');
+            showModal('An error occurred while opening the folder');
         });
 }
 
@@ -487,7 +589,7 @@ function openPhotos() {
         })
         .catch(error => {
             console.error(error);
-            alert('An error occurred while opening the folder');
+            showModal('An error occurred while opening the folder');
         });
 }
 
@@ -689,9 +791,9 @@ updateBtn.addEventListener('click', event => {
         if (selectedRow) {
             selectedRow.classList.remove('selected');
         }
-        alert('Table updated successfully');
+        showModal('Table updated successfully');
     } else {
-        alert('Error updating table');
+        showModal('Error updating table');
     }
 })
 
@@ -781,7 +883,7 @@ form3.addEventListener('submit', event => {
                 form3.reset();
             } else {
                 console.log(data.message);
-                alert(data.message)
+                showModal(data.message)
             }
         })
         .catch(error => {
@@ -814,7 +916,7 @@ form4.addEventListener('submit', event => {
                 form4.reset();
             } else {
                 console.log(data.message);
-                alert(data.message)
+                showModal(data.message)
             }
         })
         .catch(error => {
@@ -857,7 +959,7 @@ form5.addEventListener('submit', event => {
                 // form5.reset();
             } else {
                 console.log(data.message);
-                alert(data.message)
+                showModal(data.message)
             }
         })
         .catch(error => {

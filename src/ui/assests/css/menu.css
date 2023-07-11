@@ -120,6 +120,7 @@ body {
 }
 
 .modal {
+    overflow: hidden;
     display: none;
     position: fixed;
     z-index: 9999;
@@ -127,16 +128,15 @@ body {
     top: 0;
     width: 100%;
     height: 100%;
-    overflow: auto;
     background-color: rgba(0, 0, 0, 0.4);
 }
 
 .modal-content {
-    background-color: #fefefe;
-    margin: 15% auto;
-    padding: 20px;
+    background-color: lightgray;
+    margin: 20% auto;
     border: 1px solid #888;
-    width: 60%;
+    height: 25%;
+    width: 25%;
     max-width: 500px;
     position: relative;
 }
@@ -145,18 +145,24 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 10px;
+}
+
+.line {
+    border-bottom: 1px solid black;
+    margin-left: 13px;
+    width: 46vh;
+    margin-bottom: 30px;
 }
 
 .modal-title {
-    font-size: 24px;
-    margin: 0;
+    margin-left: 155px;
 }
 
 .close {
     color: #aaa;
     font-size: 28px;
     font-weight: bold;
+    margin-left: 18vh;
     cursor: pointer;
 }
 
@@ -167,7 +173,8 @@ body {
 }
 
 .modal-body {
-    margin-bottom: 20px;
+    padding: 0;
+    margin-left: 20px;
 }
 
 .modal-footer {
@@ -393,7 +400,13 @@ body {
 .new-email-btn,
 .new-username-btn,
 .new-password-btn,
-.ok-btn {
+.ok-btn,
+.yes-btn,
+.no-btn,
+.yes-btn1,
+.no-btn1,
+.yes-btn2,
+.no-btn2 {
     border-radius: 10px;
     width: 100px;
     background-color: #6495ED;

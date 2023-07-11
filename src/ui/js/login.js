@@ -250,7 +250,7 @@ form4.addEventListener('submit', event => {
     .then(response => response.json())
     .then(result => {
       if (result.success) {
-        alert("Password changed successfully")
+        showModal("Password changed successfully")
         // Redirect to the login page
         window.location.href = 'login.html';
       } else {
@@ -274,4 +274,27 @@ backContainers.forEach(container => {
       previousContent.style.display = 'block';
     }
   });
+});
+
+const modal = document.getElementById('modal');
+const closeModalBtn = document.getElementsByClassName('close')[0];
+const okBtn = document.getElementById('ok-btn');
+const modalTitle = document.getElementById('modalTitle');
+const modalBody = document.getElementById('modalBody');
+
+// Function to open the modal with a custom message
+function showModal(message) {
+  modalTitle.textContent = 'Hajirilab';
+  modalBody.textContent = message;
+  modal.style.display = 'block';
+}
+
+// Close modal when close icon is clicked
+closeModalBtn.addEventListener('click', function() {
+  modal.style.display = 'none';
+});
+
+// Close modal when OK button is clicked
+okBtn.addEventListener('click', function() {
+  modal.style.display = 'none';
 });
