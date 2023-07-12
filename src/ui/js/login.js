@@ -76,7 +76,7 @@ form1.addEventListener('submit', event => {
     password: password
   }
 
-  request.post('http://127.0.0.1:5000/login', {
+  request.post('http://192.168.0.102:5000/login', {
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(data)
   }, (error, response, body) => {
@@ -132,7 +132,7 @@ form2.addEventListener('submit', event => {
     email: email
   };
 
-  fetch('http://127.0.0.1:5000/validate_email', {
+  fetch('http://192.168.0.102:5000/validate_email', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(data)
@@ -154,7 +154,7 @@ form2.addEventListener('submit', event => {
 });
 
 function sendVerificationCode(email) {
-  fetch('http://127.0.0.1:5000/send_code', {
+  fetch('http://192.168.0.102:5000/send_code', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ email: email })
@@ -191,7 +191,7 @@ form3.addEventListener('submit', event => {
     email: email
   };
 
-  fetch('http://127.0.0.1:5000/verify_code', {
+  fetch('http://192.168.0.102:5000/verify_code', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(data)
@@ -242,7 +242,7 @@ form4.addEventListener('submit', event => {
     password: newPassword
   };
 
-  fetch('http://127.0.0.1:5000/change_password', {
+  fetch('http://192.168.0.102:5000/change_password', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(data)

@@ -235,7 +235,7 @@ form1.addEventListener('submit', event => {
 
 
 function saveEmployeeDetails(data) {
-    fetch('http://127.0.0.1:5000/save', {
+    fetch('http://192.168.0.102:5000/save', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data)
@@ -265,7 +265,7 @@ function saveEmployeeDetails(data) {
 function updateEmployeeDetails(data) {
     const employee_id = data.employee_id;
 
-    fetch(`http://127.0.0.1:5000/update/${employee_id}`, {
+    fetch(`http://192.168.0.102:5000/update/${employee_id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data)
@@ -305,7 +305,7 @@ function confirmUpdate(data) {
 
 function deleteEmployeeDetails(data) {
     const employee_id = data.employee_id;
-    fetch(`http://127.0.0.1:5000/delete/${employee_id}`, {
+    fetch(`http://192.168.0.102:5000/delete/${employee_id}`, {
         method: 'DELETE',
     })
         .then(response => {
@@ -357,7 +357,7 @@ function capturePhotos() {
     }
 
     // Send a POST request to capture and preprocess the photos
-    fetch('http://127.0.0.1:5000/capture', {
+    fetch('http://192.168.0.102:5000/capture', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -393,7 +393,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 /*----------- for showing details of employee ---------------*/
 function populateTable() {
-    const request = new Request('http://127.0.0.1:5000/employees');
+    const request = new Request('http://192.168.0.102:5000/employees');
     request.cache = 'force-cache';
     fetch(request)
         .then(response => {
@@ -456,7 +456,7 @@ const trainButton = document.getElementById('train-btn');
 trainButton.addEventListener('click', event => {
     event.preventDefault();
     // Send a POST request to the server to trigger the training
-    fetch('http://127.0.0.1:5000/train', {
+    fetch('http://192.168.0.102:5000/train', {
         method: 'POST'
     })
         .then(response => response.json())
@@ -477,7 +477,7 @@ trainButton.addEventListener('click', event => {
 });
 
 function check_In() {
-    fetch('http://127.0.0.1:5000/checkIn', {
+    fetch('http://192.168.0.102:5000/checkIn', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -506,7 +506,7 @@ document.getElementById('check-out-btn').addEventListener('click', event => {
 });
 
 function check_Out() {
-    fetch('http://127.0.0.1:5000/checkOut', {
+    fetch('http://192.168.0.102:5000/checkOut', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -552,7 +552,7 @@ function showPhotos() {
     }
 
     // Send a POST request to capture and preprocess the photos
-    fetch('http://127.0.0.1:5000/show', {
+    fetch('http://192.168.0.102:5000/show', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -575,7 +575,7 @@ function showPhotos() {
 }
 
 function openPhotos() {
-    fetch('http://127.0.0.1:5000/open', {
+    fetch('http://192.168.0.102:5000/open', {
         method: 'POST'
     })
         .then(response => {
@@ -620,7 +620,7 @@ function importCSV() {
             var formData = new FormData();
             formData.append('csv_file', file);
 
-            fetch('http://127.0.0.1:5000/import_csv', {
+            fetch('http://192.168.0.102:5000/import_csv', {
                 method: 'POST',
                 body: formData
             })
@@ -829,7 +829,7 @@ exportBtn.addEventListener('click', event => {
         tableData: tableData
     };
 
-    fetch('http://127.0.0.1:5000/export_csv', {
+    fetch('http://192.168.0.102:5000/export_csv', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data)
@@ -870,7 +870,7 @@ form3.addEventListener('submit', event => {
         password: password
     }
 
-    fetch('http://127.0.0.1:5000/change_email', {
+    fetch('http://192.168.0.102:5000/change_email', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data)
@@ -903,7 +903,7 @@ form4.addEventListener('submit', event => {
         password: password
     }
 
-    fetch('http://127.0.0.1:5000/change_username', {
+    fetch('http://192.168.0.102:5000/change_username', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data)
@@ -946,7 +946,7 @@ form5.addEventListener('submit', event => {
         newPassword: newPassword
     }
 
-    fetch('http://127.0.0.1:5000/new_password', {
+    fetch('http://192.168.0.102:5000/new_password', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data)
